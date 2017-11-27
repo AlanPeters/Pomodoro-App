@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import { TIMER_STATE } from '../enums/TimerState.js';
 
 export default class Timer extends Component {
     constructor(props){
@@ -7,20 +7,22 @@ export default class Timer extends Component {
 
 
 
-        const testDate = new Date();
         this.state = {
             now: new Date(),
-            timerIsStarted: false,
         };
     }
     getTimeSeconds() {
-        /* return now.getMilliseconds();*/
-        return ( this.state.now - this.props.timerStart)/1000;
+        if(this.props.timerState === TIMER_STATE.PAUSED) {
+            return ( this.props.timerEndTime - this.props.pausedTime)/1000; 
+        }
+        return (this.props.timerEndTime - this.state.now)/1000;
     }
     getMinutesAndSeconds(seconds){
-        const mins = Math.floor(seconds/60);
-        const secs = Math.floor(seconds % 60);
+        const isNegative = seconds <= 0;
+        const mins = Math.floor(Math.abs(seconds) / 60);
+        const secs = Math.floor(Math.abs(seconds) % 60);
         const ret = {
+            isNegative: isNegative,
             minutes: mins,
             seconds: secs,
         };
@@ -47,36 +49,20 @@ export default class Timer extends Component {
 
     render(){
         let displayTime;
-        if(this.state.timerIsStarted){
+        if(this.props.timerState === TIMER_STATE.RUNNING || this.props.timerState === TIMER_STATE.PAUSED){
             displayTime = this.getMinutesAndSeconds(this.getTimeSeconds());
-        } else {
-            displayTime = { minutes: 25, seconds: 0 };
+        } else  {
+            displayTime = this.getMinutesAndSeconds(this.props.timerLength/1000);
         }
 
         let minutes = displayTime.minutes.toString().padStart(2,"0");
         let seconds = displayTime.seconds.toString().padStart(2,"0"); 
+        let symbol = displayTime.isNegative ? '-' : ''; 
         return (
             <div className="timer">
-                <h2>{minutes}:{seconds}</h2>
-                <div className="controls">
-                    <Controls timerIsStarted={this.state.timerIsStarted} />
-                </div>
+                <h2>{symbol}{minutes}:{seconds}</h2>
             </div>
         );
     }
 }
 
-
-
-function StartStopButton(props){
-    let text = props.timerIsStarted ? "Stop Pomodoro" : "Start Pomodoro";
-    return (
-        <button>{text}</button>
-    );
-}
-
-function Controls(props){
-    return (
-        <StartStopButton timerIsStarted={props.timerIsStarted} />
-    );
-}    
