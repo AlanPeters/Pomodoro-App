@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import Timer from './Timer.jsx';
 import TimerControls from './TimerControls.jsx';
-
+import TaskList from './TaskList.jsx';
 import { TIMER_STATE } from '../enums/TimerState.js';
 
 export default class App extends Component {
@@ -18,6 +18,7 @@ export default class App extends Component {
         this.handlePauseClick = this.handlePauseClick.bind(this);
         this.handleStartStopClick = this.handleStartStopClick.bind(this);
     }
+
     render() {
         return (
             <div className="app">
@@ -32,6 +33,8 @@ export default class App extends Component {
                     timerState={this.state.timerState}
                     onStartStop={this.handleStartStopClick}
                     onPause={this.handlePauseClick} />
+
+                <TaskList tasks={this.getTasks()} />
             </div>
         );
     }
@@ -75,4 +78,7 @@ export default class App extends Component {
         }
     }
 
+    getTasks(){
+        return [ 'Task 1', 'Task 2', 'Task 3' ];
+    }
 }

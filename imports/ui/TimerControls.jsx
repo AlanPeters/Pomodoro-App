@@ -13,7 +13,9 @@ export default class TimerControls extends Component {
     }
 
     render(){
-        const startStopText = this.props.timerState === TIMER_STATE.RUNNING ? "Stop Pomodoro" : "Start Pomodoro";
+        const showStop = this.props.timerState === TIMER_STATE.RUNNING || this.props.timerState === TIMER_STATE.PAUSED;
+        const startStopText = showStop ? "Stop Pomodoro" : "Start Pomodoro";
+
         const pauseText = this.props.timerState === TIMER_STATE.PAUSED ? "Resume" : "Pause";
 
         return (
