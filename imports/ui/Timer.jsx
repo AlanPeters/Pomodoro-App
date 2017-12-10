@@ -6,16 +6,19 @@ import TimerControls from './TimerControls.jsx';
 export default class Timer extends Component {
     constructor(props){
         super(props);
+        this.tick = this.tick.bind(this);
 
-        const timer = new JSTimer(this.props.timerLength);
+        const timer = new JSTimer(this.props.timerLength, this.tick);
 
         this.state = {
             timer: timer,
             remaining: timer.getMinutesAndSeconds(),
         };
+
         this.handleStartStopClick = this.handleStartStopClick.bind(this);
         this.handlePauseClick = this.handlePauseClick.bind(this);
     }
+
 
     tick() {
         const remainingTime = this.state.timer.getMinutesAndSeconds();
@@ -25,15 +28,16 @@ export default class Timer extends Component {
     }
 
     componentDidMount() {
-        this.timerID = setInterval(
-            () => this.tick(),
-            1000
-        );
-
+        /* this.timerID = setInterval(
+         *     () => this.tick(),
+         *     1000
+         * );
+         */
     }
 
     componentWillUnmount(){
         clearInterval(this.timerID);
+        this.state.timer.stop();
     }
 
     render(){

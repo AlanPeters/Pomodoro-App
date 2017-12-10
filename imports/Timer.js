@@ -1,10 +1,11 @@
 import { TIMER_STATE } from './enums/TimerState.js';
 
 export default class Timer {
-    constructor(timerLength){
+    constructor(timerLength, tickListener){
         this.length = timerLength;
         this.state = TIMER_STATE.STOPPED; 
         this.totalPauseTime = 0;
+        this.tickListener = tickListener;
     }
 
     start(){
@@ -12,12 +13,16 @@ export default class Timer {
 
         this.startTime = new Date();
         this.state = TIMER_STATE.STARTED;
+        this.timerInterval = setInterval(
+            () => this.tick(),
+            200);
     }
 
     stop(){
         this.length = this.getRemainingTimeMs();
         this.state = TIMER_STATE.STOPPED;
 
+        clearInterval(this.timerInterval);
     }
 
     pause(){
@@ -35,21 +40,27 @@ export default class Timer {
         return this.state;
     }
 
-
     getRemainingTimeSeconds(){
-        return this.getRemainingTimeMs() / 1000;
+        return Math.floor(this.getRemainingTimeMs() / 1000);
     }
     getMinutesAndSeconds(){
-        const seconds = Math.ceil(this.getRemainingTimeSeconds());
+        const seconds = this.getRemainingTimeSeconds();
         const isNegative = seconds <= 0;
         const mins = Math.floor(Math.abs(seconds) / 60);
         let secs = Math.abs(seconds) % 60;
-        const ret = {
+        return {
             isNegative: isNegative,
             minutes: mins,
             seconds: secs,
         };
-        return ret;
+    }
+
+    tick() {
+        const curSeconds = this.getRemainingTimeSeconds();
+        if(this.lastSeconds !== curSeconds){
+            this.tickListener();
+        }
+        this.lastSeconds = curSeconds;
     }
 
 }
