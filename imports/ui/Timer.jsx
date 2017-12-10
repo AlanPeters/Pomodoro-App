@@ -7,33 +7,20 @@ export default class Timer extends Component {
     constructor(props){
         super(props);
 
+        const timer = new JSTimer(this.props.timerLength);
+
         this.state = {
-            timer: new JSTimer(this.props.timerLength),
+            timer: timer,
+            remaining: timer.getMinutesAndSeconds(),
         };
         this.handleStartStopClick = this.handleStartStopClick.bind(this);
         this.handlePauseClick = this.handlePauseClick.bind(this);
     }
 
-    getTimeSeconds() {
-        return (this.state.timer.getRemainingTimeMs())/1000;
-    }
-
-    getMinutesAndSeconds(seconds){
-        const isNegative = seconds <= 0;
-        const mins = Math.floor(Math.abs(seconds) / 60);
-        const secs = Math.floor(Math.abs(seconds) % 60);
-        const ret = {
-            isNegative: isNegative,
-            minutes: mins,
-            seconds: secs,
-        };
-        return ret;
-    }
-
     tick() {
-        let remainingSecs = this.getTimeSeconds();
+        const remainingTime = this.state.timer.getMinutesAndSeconds();
         this.setState({
-            remaining: remainingSecs,
+            remaining: remainingTime,
         });
     }
 
@@ -50,7 +37,7 @@ export default class Timer extends Component {
     }
 
     render(){
-        let displayTime = this.getMinutesAndSeconds(this.state.remaining);
+        let displayTime = this.state.remaining;
 
         let minutes = displayTime.minutes.toString().padStart(2,"0");
         let seconds = displayTime.seconds.toString().padStart(2,"0"); 

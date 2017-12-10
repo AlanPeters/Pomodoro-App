@@ -34,4 +34,22 @@ export default class Timer {
     getTimerState(){
         return this.state;
     }
+
+
+    getRemainingTimeSeconds(){
+        return this.getRemainingTimeMs() / 1000;
+    }
+    getMinutesAndSeconds(){
+        const seconds = Math.ceil(this.getRemainingTimeSeconds());
+        const isNegative = seconds <= 0;
+        const mins = Math.floor(Math.abs(seconds) / 60);
+        let secs = Math.abs(seconds) % 60;
+        const ret = {
+            isNegative: isNegative,
+            minutes: mins,
+            seconds: secs,
+        };
+        return ret;
+    }
+
 }
