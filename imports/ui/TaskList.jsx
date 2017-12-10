@@ -16,13 +16,15 @@ export default class TaskList extends Component {
         });
         return (
             <table>
-                <tr>
-                    <th>Task Name</th>
-                    <th colSpan={2} />
-                    <th >Pomodoro Number</th>
-                    <th />
-                </tr>
-                { list }
+                <tbody>
+                    <tr>
+                        <th>Task Name</th>
+                        <th colSpan={2} />
+                        <th >Pomodoro Number</th>
+                        <th />
+                    </tr>
+                    { list }
+                </tbody>
             </table>
         );
     }

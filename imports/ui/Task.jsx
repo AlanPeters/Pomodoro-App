@@ -5,7 +5,7 @@ export default class Task extends Component {
         return (
             <tr>
                 <td>{this.props.taskName}</td>
-                <td colSpant={4} />
+                <td colSpan={4} />
             </tr>
         )
     }
