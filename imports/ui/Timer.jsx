@@ -13,6 +13,7 @@ export default class Timer extends Component {
         this.state = {
             timer: timer,
             remaining: timer.getMinutesAndSeconds(),
+            timerState: timer.getTimerState(),
         };
 
         this.handleStartStopClick = this.handleStartStopClick.bind(this);
@@ -41,16 +42,11 @@ export default class Timer extends Component {
     }
 
     render(){
-        let displayTime = this.state.remaining;
-
-        let minutes = displayTime.minutes.toString().padStart(2,"0");
-        let seconds = displayTime.seconds.toString().padStart(2,"0"); 
-        let symbol = displayTime.isNegative ? '-' : ''; 
         return (
             <div className="timer">
-                <h2>{symbol}{minutes}:{seconds}</h2>
+                <TimeDisplay displayTime={this.state.remaining} />
                 <TimerControls
-                    timerState={this.state.timer.getTimerState()}
+                    timerState={this.state.timerState}
                     onStartStop={this.handleStartStopClick}
                     onPause={this.handlePauseClick} />
             </div>
@@ -63,6 +59,9 @@ export default class Timer extends Component {
         } else {
             this.state.timer.stop();
         }
+        this.setState({
+            timerState: this.state.timer.getTimerState(),
+        });
     }
 
     handlePauseClick(){
@@ -73,3 +72,10 @@ export default class Timer extends Component {
 
 }
 
+function TimeDisplay(props){
+    const displayTime = props.displayTime;
+    let minutes = displayTime.minutes.toString().padStart(2,"0");
+    let seconds = displayTime.seconds.toString().padStart(2,"0");
+    let symbol = displayTime.isNegative ? '-' : '';
+    return <h2>{symbol}{minutes}:{seconds}</h2>;
+}

@@ -3,6 +3,7 @@ import { TIMER_STATE } from './enums/TimerState.js';
 export default class Timer {
     constructor(timerLength, tickListener){
         this.length = timerLength;
+        this.originalLength = timerLength;
         this.state = TIMER_STATE.STOPPED; 
         this.totalPauseTime = 0;
         this.tickListener = tickListener;
@@ -12,7 +13,7 @@ export default class Timer {
         if(this.state === TIMER_STATE.STARTED) return;
 
         this.startTime = new Date();
-        this.state = TIMER_STATE.STARTED;
+        this.state = TIMER_STATE.RUNNING;
         this.timerInterval = setInterval(
             () => this.tick(),
             200);
@@ -36,6 +37,9 @@ export default class Timer {
         return this.length - (now.getTime() - this.startTime.getTime());
     }
 
+    getElapseTimeMs(){
+        return this.originalLength - this.getRemainingTimeMs();
+    }
     getTimerState(){
         return this.state;
     }
