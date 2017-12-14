@@ -8,15 +8,12 @@ export default class TaskList extends Component {
         super(props);
 
 
-        this.state = {
-            tasks: this.props.tasks,
-        };
         this.addTask = this.addTask.bind(this);
     }
 
     render() {
         const list = this.getTasks().map( (item, index) => {
-            return <Task taskName={item} key={index} />
+            return <Task taskName={item.text} key={index} />
         });
         return (
             <div>
@@ -37,7 +34,7 @@ export default class TaskList extends Component {
     }
 
     getTasks(){
-        return this.state.tasks;
+        return this.props.tasks;
     }
     addTask(task){
         let taskList = this.state.tasks.slice();
