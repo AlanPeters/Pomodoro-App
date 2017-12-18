@@ -29,11 +29,6 @@ export default class Timer extends Component {
     }
 
     componentDidMount() {
-        /* this.timerID = setInterval(
-         *     () => this.tick(),
-         *     1000
-         * );
-         */
     }
 
     componentWillUnmount(){
@@ -76,6 +71,7 @@ function TimeDisplay(props){
     const displayTime = props.displayTime;
     let minutes = displayTime.minutes.toString().padStart(2,"0");
     let seconds = displayTime.seconds.toString().padStart(2,"0");
+    let hours = displayTime.hours > 0 ? displayTime.hours.toString()+":" : "";
     let symbol = displayTime.isNegative ? '-' : '';
-    return <h2>{symbol}{minutes}:{seconds}</h2>;
+    return <h2>{symbol}{hours}{minutes}:{seconds}</h2>;
 }

@@ -13,6 +13,7 @@ class App extends Component {
         this.state = {
             timerLength: 1000 * 60 * 2,
         }
+        this.addTask = this.addTask.bind(this);
     }
 
     render() {
@@ -21,8 +22,11 @@ class App extends Component {
                 <h1>hello</h1>
                 <Timer
                     timerLength={this.state.timerLength}
-                    />
-                <TaskList tasks={this.getTasks()} />
+                />
+                <TaskList
+                    tasks={this.getTasks()}
+                    addTask={this.addTask}
+                />
             </div>
         );
     }
@@ -30,9 +34,14 @@ class App extends Component {
     getTasks(){
         return this.props.tasks; 
     }
+
+    addTask(task){
+       Tasks.insert(task);
+    }
+
 }
 export default withTracker(() => {
     return {
         tasks: Tasks.find({}).fetch(),
     };
-})(App); 
+})(App);

@@ -50,10 +50,12 @@ export default class Timer {
     getMinutesAndSeconds(){
         const seconds = this.getRemainingTimeSeconds();
         const isNegative = seconds <= 0;
-        const mins = Math.floor(Math.abs(seconds) / 60);
+        const hours = Math.floor(Math.abs(seconds)/(60*60));
+        const mins = Math.floor(Math.abs(seconds) / 60)%60;
         let secs = Math.abs(seconds) % 60;
         return {
             isNegative: isNegative,
+            hours: hours,
             minutes: mins,
             seconds: secs,
         };

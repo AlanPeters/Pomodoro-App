@@ -8,7 +8,6 @@ export default class TaskList extends Component {
         super(props);
 
 
-        this.addTask = this.addTask.bind(this);
     }
 
     render() {
@@ -17,7 +16,7 @@ export default class TaskList extends Component {
         });
         return (
             <div>
-                <TaskForm addTask={this.addTask} />
+                <TaskForm addTask={this.props.addTask} />
                 <table>
                     <tbody>
                         <tr>
@@ -36,13 +35,4 @@ export default class TaskList extends Component {
     getTasks(){
         return this.props.tasks;
     }
-    addTask(task){
-        let taskList = this.state.tasks.slice();
-        taskList.push(task);
-
-        this.setState({
-            tasks: taskList,
-        });
-    }
-
 }
