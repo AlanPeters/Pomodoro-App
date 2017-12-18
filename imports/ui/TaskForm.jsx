@@ -29,6 +29,7 @@ export default class TaskForm extends Component {
             text: this.state.name,
             createdOn: new Date(),
         });
+        this.setState({name: ""});
         event.preventDefault();
     }
 
