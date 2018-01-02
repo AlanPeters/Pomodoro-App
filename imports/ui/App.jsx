@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 
-import { Tasks } from '../api/tasks.js';
-
 import Timer from './Timer.jsx';
-import TimerControls from './TimerControls.jsx';
 import TaskList from './TaskList.jsx';
 
 export default class App extends Component {
@@ -17,7 +14,7 @@ export default class App extends Component {
     render() {
         return (
             <div className="app">
-                <h1>hello</h1>
+                <h1>Pomodoro Tracker</h1>
                 <Timer
                     timerLength={this.state.timerLength}
                 />

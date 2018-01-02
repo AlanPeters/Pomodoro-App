@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
-import { Tasks } from '../api/tasks.js';
+import { Tasks } from '../api/Tasks.js';
 
 import Task from './Task.jsx';
 import TaskForm from './TaskForm.jsx';
@@ -14,7 +14,7 @@ class TaskList extends Component {
 
     render() {
         const list = this.getTasks().map( (item, index) => {
-            return <Task taskName={item.text} key={index} />
+            return <Task task={item} key={index} />
         });
         return (
             <div>

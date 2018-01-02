@@ -10,7 +10,6 @@ export default class TaskForm extends Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-
     render(){
         return (
             <form onSubmit={this.handleSubmit}>

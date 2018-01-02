@@ -3,12 +3,24 @@ import { TIMER_STATE } from '../enums/TimerState.js';
 import JSTimer from '../Timer.js'; 
 import TimerControls from './TimerControls.jsx';
 
-export default class Timer extends Component {
+import { withTracker } from 'meteor/react-meteor-data';
+import { Timer as TimerState } from '../api/Timer.js';
+
+class Timer extends Component {
     constructor(props){
         super(props);
         this.tick = this.tick.bind(this);
 
-        const timer = new JSTimer(this.props.timerLength, this.tick);
+        let timerState = this.props.timerState;
+        console.log(timerState);
+        if(timerState === undefined){
+            timerState = {
+                state: TIMER_STATE.STOPPED,
+                length: this.props.timerLength,
+            };
+        }
+
+        const timer = new JSTimer(timerState, this.tick);
 
         this.state = {
             timer: timer,
@@ -20,15 +32,11 @@ export default class Timer extends Component {
         this.handlePauseClick = this.handlePauseClick.bind(this);
     }
 
-
     tick() {
         const remainingTime = this.state.timer.getMinutesAndSeconds();
         this.setState({
             remaining: remainingTime,
         });
-    }
-
-    componentDidMount() {
     }
 
     componentWillUnmount(){
@@ -37,6 +45,8 @@ export default class Timer extends Component {
     }
 
     render(){
+        console.log('render');
+        console.log(this.props.timerState);
         return (
             <div className="timer">
                 <TimeDisplay displayTime={this.state.remaining} />
@@ -56,15 +66,11 @@ export default class Timer extends Component {
         }
         this.setState({
             timerState: this.state.timer.getTimerState(),
-        });
+        })
     }
 
     handlePauseClick(){
-        /* if(this.state.timer*/
     }
-
-
-
 }
 
 function TimeDisplay(props){
@@ -75,3 +81,13 @@ function TimeDisplay(props){
     let symbol = displayTime.isNegative ? '-' : '';
     return <h2>{symbol}{hours}{minutes}:{seconds}</h2>;
 }
+
+export default withTracker(() => {
+    timerState = TimerState.find().fetch();
+    console.log("In Tracker");
+   
+    console.log(timerState);
+    return {
+        timerState: timerState[0],
+    };
+})(Timer);
