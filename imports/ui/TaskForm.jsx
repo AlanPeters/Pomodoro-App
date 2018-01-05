@@ -10,7 +10,6 @@ export default class TaskForm extends Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-
     render(){
         return (
             <form onSubmit={this.handleSubmit}>
@@ -25,7 +24,11 @@ export default class TaskForm extends Component {
     }
 
     handleSubmit(event){
-        this.props.addTask(this.state.name);
+        this.props.addTask({
+            text: this.state.name,
+            createdOn: new Date(),
+        });
+        this.setState({name: ""});
         event.preventDefault();
     }
 

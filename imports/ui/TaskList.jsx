@@ -1,22 +1,20 @@
 import React, {Component} from 'react';
+import { withTracker } from 'meteor/react-meteor-data';
+
+import { Tasks } from '../api/Tasks.js';
 
 import Task from './Task.jsx';
 import TaskForm from './TaskForm.jsx';
 
-export default class TaskList extends Component {
+class TaskList extends Component {
     constructor(props) {
         super(props);
-
-
-        this.state = {
-            tasks: this.props.tasks,
-        };
         this.addTask = this.addTask.bind(this);
     }
 
     render() {
         const list = this.getTasks().map( (item, index) => {
-            return <Task taskName={item} key={index} />
+            return <Task task={item} key={index} />
         });
         return (
             <div>
@@ -26,7 +24,7 @@ export default class TaskList extends Component {
                         <tr>
                             <th>Task Name</th>
                             <th colSpan={2} />
-                            <th >Pomodoro Number</th>
+                            <th>Pomodoro Number</th>
                             <th />
                         </tr>
                         { list }
@@ -37,15 +35,14 @@ export default class TaskList extends Component {
     }
 
     getTasks(){
-        return this.state.tasks;
+        return this.props.tasks;
     }
     addTask(task){
-        let taskList = this.state.tasks.slice();
-        taskList.push(task);
-
-        this.setState({
-            tasks: taskList,
-        });
+        Tasks.insert(task);
     }
-
 }
+export default withTracker(() => {
+    return {
+        tasks: Tasks.find({}).fetch(),
+    };
+})(TaskList);

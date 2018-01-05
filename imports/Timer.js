@@ -1,34 +1,25 @@
 import { TIMER_STATE } from './enums/TimerState.js';
 
 export default class Timer {
-    constructor(timerLength, tickListener){
-        this.length = timerLength;
-        this.originalLength = timerLength;
-        this.state = TIMER_STATE.STOPPED; 
-        this.totalPauseTime = 0;
+    constructor(timerState, tickListener){
+        this.length = timerState.length;
+        this.state = timerState.state;
         this.tickListener = tickListener;
+        
+        if(this.state === TIMER_STATE.RUNNING) {
+            this.startTime = timerState.startTime;
+            this.start();
+        }
     }
 
     start(){
-        if(this.state === TIMER_STATE.STARTED) return;
-
-        this.startTime = new Date();
-        this.state = TIMER_STATE.RUNNING;
         this.timerInterval = setInterval(
             () => this.tick(),
             200);
     }
 
     stop(){
-        this.length = this.getRemainingTimeMs();
-        this.state = TIMER_STATE.STOPPED;
-
         clearInterval(this.timerInterval);
-    }
-
-    pause(){
-        this.length = this.getRemainingTimeMs();
-        this.state = TIMER_STATE.PAUSED;
     }
 
     getRemainingTimeMs(){
@@ -37,23 +28,19 @@ export default class Timer {
         return this.length - (now.getTime() - this.startTime.getTime());
     }
 
-    getElapseTimeMs(){
-        return this.originalLength - this.getRemainingTimeMs();
-    }
-    getTimerState(){
-        return this.state;
-    }
-
     getRemainingTimeSeconds(){
         return Math.floor(this.getRemainingTimeMs() / 1000);
     }
-    getMinutesAndSeconds(){
+
+    getHoursMinutesSeconds(){
         const seconds = this.getRemainingTimeSeconds();
         const isNegative = seconds <= 0;
-        const mins = Math.floor(Math.abs(seconds) / 60);
+        const hours = Math.floor(Math.abs(seconds)/(60*60));
+        const mins = Math.floor(Math.abs(seconds) / 60)%60;
         let secs = Math.abs(seconds) % 60;
         return {
             isNegative: isNegative,
+            hours: hours,
             minutes: mins,
             seconds: secs,
         };
@@ -62,6 +49,7 @@ export default class Timer {
     tick() {
         const curSeconds = this.getRemainingTimeSeconds();
         if(this.lastSeconds !== curSeconds){
+            console.log(this.lastSeconds);
             this.tickListener();
         }
         this.lastSeconds = curSeconds;
