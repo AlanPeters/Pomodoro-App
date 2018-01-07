@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import JSTimer from '../Timer.js';
-import TIMER_STATE from '../enums/TimerState.js';
 
 export default class Timer extends Component {
     constructor(props){
@@ -8,7 +7,7 @@ export default class Timer extends Component {
 
         this.myTick = this.myTick.bind(this);
 
-        this.setupTimer(this.props.length, this.props.startTime, this.props.state);
+        this.setupTimer(this.props.timerState);
 
         this.state = {
             displayTime: this.timer.getHoursMinutesSeconds(),
@@ -24,21 +23,15 @@ export default class Timer extends Component {
     }
 
     componentWillReceiveProps(nextProps){
-        this.setupTimer(nextProps.length, nextProps.startTime, nextProps.state);
+        this.setupTimer(nextProps.timerState);
         this.setState({ displayTime: this.timer.getHoursMinutesSeconds(), });
         console.log("Timer:new props received");
     }
 
-    setupTimer(length, startTime, state){
+    setupTimer(timerState){
         if(this.timer){
             this.timer.stop();
         }
-
-        const timerState = {
-            length: length,
-            startTime: startTime,
-            state: state,
-        };
 
         this.timer = new JSTimer(timerState, this.myTick);
     }

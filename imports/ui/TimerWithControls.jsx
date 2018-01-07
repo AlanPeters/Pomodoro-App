@@ -29,8 +29,10 @@ class TimerWithControls extends Component {
         } else {
             TimerState.remove(this.props.timerState._id);
         }
-
     }
+
+    handlePauseClick(){
+    };
 
     getTimerState(){
         return this.props.timerState || {
@@ -39,16 +41,16 @@ class TimerWithControls extends Component {
         };
     }
 
-    handlePauseClick(){};
-
     render(){
         const timerState = this.getTimerState();
         return (
             <div className="timer">
                 <Timer
+                    timerState={this.getTimerState()}
                     length={timerState.length}
                     startTime={timerState.startTime}
-                    state={timerState.state} />
+                    state={timerState.state}
+                />
                 <TimerControls
                     timerState={timerState.state}
                     onStartStop={this.handleStartStopClick}

@@ -5,6 +5,9 @@ export default class Timer {
         this.length = timerState.length;
         this.state = timerState.state;
         this.tickListener = tickListener;
+        console.log("in timer");
+
+        console.log(timerState);
         
         if(this.state === TIMER_STATE.RUNNING) {
             this.startTime = timerState.startTime;
