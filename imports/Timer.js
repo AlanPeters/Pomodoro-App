@@ -1,34 +1,77 @@
 import { TIMER_STATE } from './enums/TimerState.js';
 
 export default class Timer {
-    constructor(timerState, tickListener){
-        this.length = timerState.length;
-        this.state = timerState.state;
-        this.tickListener = tickListener;
-        console.log("in timer");
+    constructor(timerState){
+        this.length = timerState.length || 0;
+        this.state = timerState.state || TIMER_STATE.STOPPED;
+        this.startTime = timerState.startTime;
+    }
 
-        console.log(timerState);
-        
-        if(this.state === TIMER_STATE.RUNNING) {
-            this.startTime = timerState.startTime;
-            this.start();
+    setTickListener(tickListener){
+        if(!tickListener) return;
+        this.tickListener = tickListener;
+        if(this.isRunning()) {
+            this.startInterval();
         }
     }
 
+    removeTickListener(){
+        this.stopInterval();
+        delete(this.tickListener);
+    }
+
     start(){
+        if(this.isRunning()){
+            return;
+        }
+        this.state = TIMER_STATE.RUNNING;
+        this.startTime = new Date();
+        this.startInterval();
+    }
+
+    isRunning(){
+        return this.getState() === TIMER_STATE.RUNNING;
+    }
+
+    startInterval(){
+        if(!this.timerInterval && this.tickListener)
         this.timerInterval = setInterval(
             () => this.tick(),
             200);
     }
 
-    stop(){
-        clearInterval(this.timerInterval);
+    tick() {
+        const curSeconds = this.getRemainingTimeSeconds();
+        if(this.lastSeconds !== curSeconds){
+            this.tickListener();
+        }
+        this.lastSeconds = curSeconds;
     }
+
+
+
+    stop(){
+        this.stopInterval();
+        this.state = TIMER_STATE.STOPPED;
+        delete(this.startTime);
+    }
+
+    destroy(){
+        this.stopInterval();
+    }
+
+    stopInterval(){
+        if(this.timerInterval){
+            clearInterval(this.timerInterval);
+            delete(this.timerInterval);
+        }
+    }
+
 
     getRemainingTimeMs(){
         if(this.state === TIMER_STATE.STOPPED) return this.length;
         let now = new Date();
-        return this.length - (now.getTime() - this.startTime.getTime());
+        return this.getLength() - (now.getTime() - this.getStartTime().getTime());
     }
 
     getRemainingTimeSeconds(){
@@ -49,13 +92,24 @@ export default class Timer {
         };
     }
 
-    tick() {
-        const curSeconds = this.getRemainingTimeSeconds();
-        if(this.lastSeconds !== curSeconds){
-            console.log(this.lastSeconds);
-            this.tickListener();
-        }
-        this.lastSeconds = curSeconds;
+    toJSON(){
+        return {
+            state: this.getState(),
+            startTime: this.getStartTime(),
+            length: this.getLength(),
+        };
+    }
+
+    getLength(){
+        return this.length;
+    }
+
+    getState(){
+        return this.state;
+    }
+
+    getStartTime(){
+        return this.startTime;
     }
 
 }

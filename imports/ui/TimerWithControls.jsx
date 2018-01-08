@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
-import { TIMER_STATE } from '../enums/TimerState.js';
-import JSTimer from '../Timer.js';
+
 import TimerControls from './TimerControls.jsx';
 import Timer from './Timer.jsx';
 
-import { withTracker } from 'meteor/react-meteor-data';
-import { Timer as TimerState } from '../api/Timer.js';
-
-class TimerWithControls extends Component {
+export default class TimerWithControls extends Component {
     constructor(props){
         super(props);
 
@@ -16,43 +12,28 @@ class TimerWithControls extends Component {
     }
 
     componentWillReceiveProps(nextProps){
-        console.log(nextProps);
     }
 
     handleStartStopClick(){
-        if(this.getTimerState().state === TIMER_STATE.STOPPED) {
-            TimerState.insert({
-                state: TIMER_STATE.RUNNING,
-                length: this.props.timerLength,
-                startTime: new Date(),
-            });
+        if(!this.props.timer.isRunning()) {
+           this.props.timer.start();
         } else {
-            TimerState.remove(this.props.timerState._id);
+            this.props.timer.stop();
         }
     }
 
     handlePauseClick(){
     };
 
-    getTimerState(){
-        return this.props.timerState || {
-            state: TIMER_STATE.STOPPED,
-            length: this.props.timerLength,
-        };
-    }
 
     render(){
-        const timerState = this.getTimerState();
         return (
             <div className="timer">
                 <Timer
-                    timerState={this.getTimerState()}
-                    length={timerState.length}
-                    startTime={timerState.startTime}
-                    state={timerState.state}
+                    timer={this.props.timer}
                 />
                 <TimerControls
-                    timerState={timerState.state}
+                    timer={this.props.timer}
                     onStartStop={this.handleStartStopClick}
                     onPause={this.handlePauseClick} />
             </div>
@@ -62,12 +43,3 @@ class TimerWithControls extends Component {
 }
 
 
-export default withTracker(() => {
-    const timerStateResult = TimerState.find().fetch();
-    console.log("In Tracker");
-    const timerState = timerStateResult[0];
-    console.log(timerState);
-    return {
-        timerState: timerState,
-    };
-})(TimerWithControls);
