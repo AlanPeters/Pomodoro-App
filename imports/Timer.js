@@ -29,15 +29,30 @@ export default class Timer {
         this.startInterval();
     }
 
-    isRunning(){
-        return this.getState() === TIMER_STATE.RUNNING;
+    stop(){
+        this.stopInterval();
+        this.length = this.getRemainingTimeMs();
+        this.state = TIMER_STATE.STOPPED;
+        delete(this.startTime);
     }
+
+    destroy(){
+        this.stopInterval();
+    }
+
 
     startInterval(){
         if(!this.timerInterval && this.tickListener)
         this.timerInterval = setInterval(
             () => this.tick(),
             200);
+    }
+
+    stopInterval(){
+        if(this.timerInterval){
+            clearInterval(this.timerInterval);
+            delete(this.timerInterval);
+        }
     }
 
     tick() {
@@ -48,34 +63,8 @@ export default class Timer {
         this.lastSeconds = curSeconds;
     }
 
-
-
-    stop(){
-        this.stopInterval();
-        this.state = TIMER_STATE.STOPPED;
-        delete(this.startTime);
-    }
-
-    destroy(){
-        this.stopInterval();
-    }
-
-    stopInterval(){
-        if(this.timerInterval){
-            clearInterval(this.timerInterval);
-            delete(this.timerInterval);
-        }
-    }
-
-
-    getRemainingTimeMs(){
-        if(this.state === TIMER_STATE.STOPPED) return this.length;
-        let now = new Date();
-        return this.getLength() - (now.getTime() - this.getStartTime().getTime());
-    }
-
-    getRemainingTimeSeconds(){
-        return Math.floor(this.getRemainingTimeMs() / 1000);
+    isRunning(){
+        return this.getState() === TIMER_STATE.RUNNING;
     }
 
     getHoursMinutesSeconds(){
@@ -90,6 +79,20 @@ export default class Timer {
             minutes: mins,
             seconds: secs,
         };
+    }
+
+    getRemainingTimeSeconds(){
+        return Math.floor(this.getRemainingTimeMs() / 1000);
+    }
+
+    getRemainingTimeMs(){
+        if(!this.isRunning()) return this.length;
+        let now = new Date();
+        return this.getLength() - this.getElapsedTimeMs();
+    }
+
+    getElapsedTimeMs(){
+        return new Date().getTime() - this.getStartTime().getTime();
     }
 
     toJSON(){

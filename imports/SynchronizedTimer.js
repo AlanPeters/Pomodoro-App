@@ -6,6 +6,7 @@ export default class SynchronizedTimer {
         this.timer = new Timer(timerState);
         this.timerID = timerState._id;
         this.setTickListener = this.timer.setTickListener.bind(this.timer);
+        this.removeTickListener = this.timer.removeTickListener.bind(this.timer);
         this.getHoursMinutesSeconds = this.timer.getHoursMinutesSeconds.bind(this.timer);
         this.destroy = this.timer.destroy.bind(this.timer);
         this.getLength = this.timer.getLength.bind(this.timer);
@@ -14,12 +15,16 @@ export default class SynchronizedTimer {
 
     start(){
         this.timer.start();
-        TimerState.insert(this.timer.toJSON());
+        if(this.timerID) {
+            TimerState.update(this.timerID, this.timer.toJSON());
+        }else{
+            TimerState.insert(this.timer.toJSON());
+        }
     }
 
     stop(){
         this.timer.stop();
-        TimerState.remove(this.timerID);
+        TimerState.update(this.timerID, this.timer.toJSON());
     }
 
     pause(){

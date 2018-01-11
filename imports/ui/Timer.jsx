@@ -6,7 +6,6 @@ export default class Timer extends Component {
 
         this.myTick = this.myTick.bind(this);
 
-        this.setupTimer();
 
         this.state = {
             displayTime: this.props.timer.getHoursMinutesSeconds(),
@@ -14,20 +13,25 @@ export default class Timer extends Component {
     }
 
     componentWillMount(){
-
+        this.setupTimer();
     }
 
     componentWillUnmount(){
-        //cleanup timer
+        this.tearDownTimer();
     }
 
     componentWillReceiveProps(nextProps){
+        this.tearDownTimer();
         nextProps.timer.setTickListener(this.myTick);
-        this.setState({ displayTime: this.props.timer.getHoursMinutesSeconds(), });
+        this.setState({ displayTime: nextProps.timer.getHoursMinutesSeconds(), });
     }
 
     setupTimer(){
         this.props.timer.setTickListener(this.myTick);
+    }
+
+    tearDownTimer(){
+        this.props.timer.removeTickListener();
     }
 
     myTick(){
@@ -39,10 +43,10 @@ export default class Timer extends Component {
 
     render(){
         const displayTime = this.state.displayTime;
-        let minutes = displayTime.minutes.toString().padStart(2,"0")
-        let seconds = displayTime.seconds.toString().padStart(2,"0");
-        let hours = displayTime.hours > 0 ? displayTime.hours.toString()+":" : "";
-        let symbol = displayTime.isNegative ? '-' : '';
+        const minutes = displayTime.minutes.toString().padStart(2,"0")
+        const seconds = displayTime.seconds.toString().padStart(2,"0");
+        const hours = displayTime.hours > 0 ? displayTime.hours.toString()+":" : "";
+        const symbol = displayTime.isNegative ? '-' : '';
         return <h2>{symbol}{hours}{minutes}:{seconds}</h2>;
     }
 

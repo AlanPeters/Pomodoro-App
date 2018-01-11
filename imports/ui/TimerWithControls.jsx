@@ -7,24 +7,12 @@ export default class TimerWithControls extends Component {
     constructor(props){
         super(props);
 
-        this.handleStartStopClick = this.handleStartStopClick.bind(this);
-        this.handlePauseClick = this.handlePauseClick.bind(this);
+        this.finishedHandler = this.finishedHandler.bind(this);
     }
 
-    componentWillReceiveProps(nextProps){
+    finishedHandler(){
+
     }
-
-    handleStartStopClick(){
-        if(!this.props.timer.isRunning()) {
-           this.props.timer.start();
-        } else {
-            this.props.timer.stop();
-        }
-    }
-
-    handlePauseClick(){
-    };
-
 
     render(){
         return (
@@ -34,8 +22,8 @@ export default class TimerWithControls extends Component {
                 />
                 <TimerControls
                     timer={this.props.timer}
-                    onStartStop={this.handleStartStopClick}
-                    onPause={this.handlePauseClick} />
+                    finishedHandler={this.finishedHandler}
+                    />
             </div>
         );
     }
