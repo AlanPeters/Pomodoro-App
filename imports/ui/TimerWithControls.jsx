@@ -11,7 +11,7 @@ export default class TimerWithControls extends Component {
     }
 
     finishedHandler(){
-
+        this.props.timer.finish();
     }
 
     render(){

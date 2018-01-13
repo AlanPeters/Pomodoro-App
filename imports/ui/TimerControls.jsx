@@ -13,7 +13,7 @@ export default class TimerControls extends Component {
 
 
     componentWillReceiveProps(nextProps){
-       this.setState({ running: nextProps.timer.isRunning()})
+        this.setState({ running: nextProps.timer.isRunning()})
     }
 
     render(){
@@ -23,13 +23,13 @@ export default class TimerControls extends Component {
         const pauseText = "Pause";
 
         return (
-           <div>
+            <div>
                 <button name="startStopButton" onClick={this.onStartStop}>
                     {startStopText}
                 </button>
-                <button name="pauseButton" onClick={this.props.onPause}>
-                    {pauseText}
-                </button>
+                {/*<button name="pauseButton" onClick={this.onPause}>*/}
+                    {/*{pauseText}*/}
+                {/*</button>*/}
             </div>
         );
     }
@@ -37,6 +37,7 @@ export default class TimerControls extends Component {
     onStartStop(){
         if(this.props.timer.isRunning()){
             this.props.timer.stop();
+            this.props.finishedHandler();
         } else {
             this.props.timer.start();
         }
@@ -46,7 +47,13 @@ export default class TimerControls extends Component {
     }
 
     onPause(){
-
+        if(this.props.timer.isRunning()) {
+            this.paused = true;
+            this.props.timer.stop();
+        } else if (this.paused) {
+            this.paused = false;
+            this.props.timer.start();
+        }
     }
 }
 

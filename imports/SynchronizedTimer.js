@@ -31,4 +31,9 @@ export default class SynchronizedTimer {
         this.timer.pause();
     }
 
+    finish(){
+        this.timer.destroy();
+        TimerState.remove(this.timerID);
+    }
+
 }

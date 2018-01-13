@@ -40,7 +40,6 @@ export default class Timer {
         this.stopInterval();
     }
 
-
     startInterval(){
         if(!this.timerInterval && this.tickListener)
         this.timerInterval = setInterval(
@@ -63,16 +62,12 @@ export default class Timer {
         this.lastSeconds = curSeconds;
     }
 
-    isRunning(){
-        return this.getState() === TIMER_STATE.RUNNING;
-    }
-
     getHoursMinutesSeconds(){
         const seconds = this.getRemainingTimeSeconds();
         const isNegative = seconds <= 0;
         const hours = Math.floor(Math.abs(seconds)/(60*60));
         const mins = Math.floor(Math.abs(seconds) / 60)%60;
-        let secs = Math.abs(seconds) % 60;
+        const secs = Math.abs(seconds) % 60;
         return {
             isNegative: isNegative,
             hours: hours,
@@ -101,6 +96,10 @@ export default class Timer {
             startTime: this.getStartTime(),
             length: this.getLength(),
         };
+    }
+
+    isRunning(){
+        return this.getState() === TIMER_STATE.RUNNING;
     }
 
     getLength(){
