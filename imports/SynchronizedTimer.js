@@ -27,10 +27,6 @@ export default class SynchronizedTimer {
         TimerState.update(this.timerID, this.timer.toJSON());
     }
 
-    pause(){
-        this.timer.pause();
-    }
-
     finish(){
         this.timer.destroy();
         TimerState.remove(this.timerID);
