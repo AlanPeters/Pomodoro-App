@@ -2,6 +2,7 @@ import { TIMER_STATE } from './enums/TimerState.js';
 
 export default class Timer {
     constructor(timerState){
+        timerState = timerState || {};
         this.length = timerState.length || 0;
         this.state = timerState.state || TIMER_STATE.STOPPED;
         this.startTime = timerState.startTime;
