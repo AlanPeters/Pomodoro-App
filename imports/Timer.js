@@ -6,6 +6,9 @@ export default class Timer {
         this.length = timerState.length || 0;
         this.state = timerState.state || TIMER_STATE.STOPPED;
         this.startTime = timerState.startTime;
+        if(this.state === TIMER_STATE.RUNNING && !this.startTime){
+            this.startTime = new Date();
+        }
     }
 
     setTickListener(tickListener){
@@ -31,6 +34,7 @@ export default class Timer {
     }
 
     stop(){
+
         this.stopInterval();
         this.length = this.getRemainingTimeMs();
         this.state = TIMER_STATE.STOPPED;
@@ -42,10 +46,15 @@ export default class Timer {
     }
 
     startInterval(){
-        if(!this.timerInterval && this.tickListener)
-        this.timerInterval = setInterval(
-            () => this.tick(),
-            200);
+        if(!this.timerInterval && this.tickListener){
+            setTimeout(() => {
+                this.timerInterval = setInterval(
+                    () => this.tick(),
+                    200);
+                this.tick();
+            }, 10);
+            this.tick();
+        }
     }
 
     stopInterval(){
@@ -83,7 +92,6 @@ export default class Timer {
 
     getRemainingTimeMs(){
         if(!this.isRunning()) return this.length;
-        let now = new Date();
         return this.getLength() - this.getElapsedTimeMs();
     }
 
