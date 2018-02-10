@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-import JSTimer from '../Timer.js';
-import TIMER_STATE from '../enums/TimerState.js';
 
 export default class Timer extends Component {
     constructor(props){
@@ -8,44 +6,36 @@ export default class Timer extends Component {
 
         this.myTick = this.myTick.bind(this);
 
-        this.setupTimer(this.props.length, this.props.startTime, this.props.state);
 
         this.state = {
-            displayTime: this.timer.getHoursMinutesSeconds(),
+            displayTime: this.props.timer.getHoursMinutesSeconds(),
         };
     }
 
     componentWillMount(){
-
+        this.setupTimer();
     }
 
     componentWillUnmount(){
-        this.timer.stop();
+        this.tearDownTimer();
     }
 
     componentWillReceiveProps(nextProps){
-        this.setupTimer(nextProps.length, nextProps.startTime, nextProps.state);
-        this.setState({ displayTime: this.timer.getHoursMinutesSeconds(), });
-        console.log("Timer:new props received");
+        this.tearDownTimer();
+        nextProps.timer.setTickListener(this.myTick);
+        this.setState({ displayTime: nextProps.timer.getHoursMinutesSeconds(), });
     }
 
-    setupTimer(length, startTime, state){
-        if(this.timer){
-            this.timer.stop();
-        }
+    setupTimer(){
+        this.props.timer.setTickListener(this.myTick);
+    }
 
-        const timerState = {
-            length: length,
-            startTime: startTime,
-            state: state,
-        };
-
-        this.timer = new JSTimer(timerState, this.myTick);
+    tearDownTimer(){
+        this.props.timer.removeTickListener();
     }
 
     myTick(){
-        const displayTime = this.timer.getHoursMinutesSeconds();
-        console.log(displayTime);
+        const displayTime = this.props.timer.getHoursMinutesSeconds();
         this.setState({
             displayTime: displayTime,
         });
@@ -53,10 +43,10 @@ export default class Timer extends Component {
 
     render(){
         const displayTime = this.state.displayTime;
-        let minutes = displayTime.minutes.toString().padStart(2,"0")
-        let seconds = displayTime.seconds.toString().padStart(2,"0");
-        let hours = displayTime.hours > 0 ? displayTime.hours.toString()+":" : "";
-        let symbol = displayTime.isNegative ? '-' : '';
+        const minutes = displayTime.minutes.toString().padStart(2,"0")
+        const seconds = displayTime.seconds.toString().padStart(2,"0");
+        const hours = displayTime.hours > 0 ? displayTime.hours.toString()+":" : "";
+        const symbol = displayTime.isNegative ? '-' : '';
         return <h2>{symbol}{hours}{minutes}:{seconds}</h2>;
     }
 

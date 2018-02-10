@@ -1,33 +1,59 @@
 import React, { Component } from 'react';
-import { TIMER_STATE } from '../enums/TimerState.js';
 
 export default class TimerControls extends Component {
     constructor(props){
         super(props);
+
+        this.onStartStop = this.onStartStop.bind(this);
+        this.onPause = this.onPause.bind(this);
+        this.state = {
+            running: this.props.timer.isRunning(),
+        }
     }
 
-    componentDidMount() {
-    }
 
-    componentWillUnmount(){
+    componentWillReceiveProps(nextProps){
+        this.setState({ running: nextProps.timer.isRunning()})
     }
 
     render(){
-        const showStop = this.props.timerState === TIMER_STATE.RUNNING || this.props.timerState === TIMER_STATE.PAUSED;
-        const startStopText = showStop ? "Stop Pomodoro" : "Start Pomodoro";
+        const showStop = this.state.running;
+        const startStopText = showStop ? "Finish Pomodoro" : "Start Pomodoro";
 
-        const pauseText = this.props.timerState === TIMER_STATE.PAUSED ? "Resume" : "Pause";
+        const pauseText = "Pause";
 
         return (
             <div>
-                <button name="startStopButton" onClick={this.props.onStartStop}>
+                <button name="startStopButton" onClick={this.onStartStop}>
                     {startStopText}
                 </button>
-                <button name="pauseButton" onClick={this.props.onPause}>
-                    {pauseText}
-                </button>
+                {/*<button name="pauseButton" onClick={this.onPause}>*/}
+                    {/*{pauseText}*/}
+                {/*</button>*/}
             </div>
         );
+    }
+
+    onStartStop(){
+        if(this.props.timer.isRunning()){
+            this.props.timer.stop();
+            this.props.finishedHandler();
+        } else {
+            this.props.timer.start();
+        }
+        this.setState({
+            running: this.props.timer.isRunning(),
+        });
+    }
+
+    onPause(){
+        if(this.props.timer.isRunning()) {
+            this.paused = true;
+            this.props.timer.stop();
+        } else if (this.paused) {
+            this.paused = false;
+            this.props.timer.start();
+        }
     }
 }
 

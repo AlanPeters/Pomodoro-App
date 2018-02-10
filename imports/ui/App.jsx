@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import Timer from './TimerWithControls.jsx';
+import Timer from './TimerInjector.jsx';
 import TaskList from './TaskList.jsx';
 
 export default class App extends Component {
