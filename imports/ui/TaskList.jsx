@@ -10,6 +10,8 @@ class TaskList extends Component {
     constructor(props) {
         super(props);
         this.addTask = this.addTask.bind(this);
+        console.log(this.getTasks()[0]);
+        this.props.newTaskHandler(this.getTasks()[0]);
     }
 
     render() {
@@ -37,10 +39,16 @@ class TaskList extends Component {
     getTasks(){
         return this.props.tasks;
     }
+
     addTask(task){
         Tasks.insert(task);
     }
+
+    componentWillReceiveProps(nextProps){
+        nextProps.newTaskHandler(nextProps.tasks[0]);
+    }
 }
+
 export default withTracker(() => {
     return {
         tasks: Tasks.find({}).fetch(),

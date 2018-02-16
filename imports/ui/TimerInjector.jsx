@@ -4,7 +4,6 @@ import JSTimer from '../SynchronizedTimer.js';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Timer as TimerState } from '../api/Timer.js';
 import { TIMER_STATE } from '../enums/TimerState.js';
-import TimerWithControls from './TimerWithControls.jsx';
 
 class TimerInjector extends Component {
 
@@ -21,8 +20,7 @@ class TimerInjector extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setupTimer(nextProps.timerState
-            || this.getDefaultTimerState());
+        this.setupTimer(nextProps.timerState || this.getDefaultTimerState());
     }
 
     setupTimer(timerState){
@@ -47,7 +45,7 @@ class TimerInjector extends Component {
     }
 
     render(){
-        return(<TimerWithControls timer={this.state.timer} />);
+        return this.props.render(this.state.timer);
     }
 }
 
