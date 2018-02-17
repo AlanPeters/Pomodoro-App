@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import Timer from './TimerInjector.jsx';
+import TimerInjector from './TimerInjector.jsx';
 import TaskList from './TaskList.jsx';
 import TimerWithControls from './TimerWithControls.jsx';
 
@@ -18,13 +18,13 @@ export default class App extends Component {
     }
 
     render() {
+        const Timer = TimerInjector(TimerWithControls);
         return (
             <div className="app">
                 <h1>Pomodoro Tracker</h1>
                 <Timer
                     timerLength={this.state.timerLength}
                     completeTask={this.completeTask}
-                    render={(timer)=>(<TimerWithControls timer={timer} />)}
                 />
                 <h2>Current Task: {this.state.currentTask}</h2>
                 <TaskList newTaskHandler={this.setCurrentTask} />
