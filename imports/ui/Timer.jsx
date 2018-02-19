@@ -12,7 +12,7 @@ export default class Timer extends Component {
         };
     }
 
-    componentWillMount(){
+    componentDidMount(){
         this.setupTimer();
     }
 
@@ -21,7 +21,7 @@ export default class Timer extends Component {
     }
 
     componentWillReceiveProps(nextProps){
-        this.tearDownTimer();
+        this.props.timer.removeTickListener();
         nextProps.timer.setTickListener(this.myTick);
         this.setState({ displayTime: nextProps.timer.getHoursMinutesSeconds(), });
     }

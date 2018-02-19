@@ -28,7 +28,7 @@ export default class SynchronizedTimer {
     }
 
     finish(){
-        this.timer.destroy();
+        this.timer.stop();
         TimerState.remove(this.timerID);
     }
 

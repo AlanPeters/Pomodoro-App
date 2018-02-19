@@ -147,6 +147,18 @@ describe('JSTImer', function () {
             timer.removeTickListener();
             clock.tick(600);
             assert.equal(mySpy.callCount, 2);
+            clock.tick(1200);
+            assert.equal(mySpy.callCount, 2);
+        });
+        it('Should stop calling the callback after it is destroyed', function(){
+            timer.setTickListener(mySpy);
+            timer.start();
+            clock.tick(500);
+            timer.destroy();
+            clock.tick(600);
+            assert.equal(mySpy.callCount, 2);
+            clock.tick(1200);
+            assert.equal(mySpy.callCount, 2);
         });
     });
 

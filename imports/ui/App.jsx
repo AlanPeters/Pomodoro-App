@@ -24,7 +24,7 @@ export default class App extends Component {
                 <h1>Pomodoro Tracker</h1>
                 <Timer
                     timerLength={this.state.timerLength}
-                    completeTask={this.completeTask}
+                    finishedHandler={this.completeTask}
                 />
                 <h2>Current Task: {this.state.currentTask}</h2>
                 <TaskList newTaskHandler={this.setCurrentTask} />
@@ -45,7 +45,7 @@ export default class App extends Component {
     }
 
     completeTask(){
-
+        alert('task complete');
     }
 
 }

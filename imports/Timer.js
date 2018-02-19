@@ -34,7 +34,6 @@ export default class Timer {
     }
 
     stop(){
-
         this.stopInterval();
         this.length = this.getRemainingTimeMs();
         this.state = TIMER_STATE.STOPPED;
@@ -47,7 +46,7 @@ export default class Timer {
 
     startInterval(){
         if(!this.timerInterval && this.tickListener){
-            setTimeout(() => {
+            this.timerInterval = setTimeout(() => {
                 this.timerInterval = setInterval(
                     () => this.tick(),
                     200);
