@@ -86,7 +86,7 @@ export default class Timer {
     }
 
     getRemainingTimeSeconds(){
-        return Math.floor(this.getRemainingTimeMs() / 1000);
+        return Timer.convertMsToSeconds(this.getRemainingTimeMs());
     }
 
     getRemainingTimeMs(){
@@ -120,6 +120,24 @@ export default class Timer {
 
     getStartTime(){
         return this.startTime;
+    }
+
+    static convertMsToHoursMinsSecs(timeMs){
+        const seconds = Timer.convertMsToSeconds(timeMs);
+        const isNegative = seconds <= 0;
+        const hours = Math.floor(Math.abs(seconds)/(60*60));
+        const minutes = Math.floor(Math.abs(seconds) / 60)%60;
+        const remainingSeconds = Math.abs(seconds) % 60;
+        return {
+            isNegative: isNegative,
+            hours: hours,
+            minutes: minutes,
+            seconds: remainingSeconds,
+        };
+    }
+
+    static convertMsToSeconds(timeMs){
+        return Math.floor(timeMs / 1000);
     }
 
 }

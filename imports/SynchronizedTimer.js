@@ -8,6 +8,7 @@ export default class SynchronizedTimer {
         this.setTickListener = this.timer.setTickListener.bind(this.timer);
         this.removeTickListener = this.timer.removeTickListener.bind(this.timer);
         this.getHoursMinutesSeconds = this.timer.getHoursMinutesSeconds.bind(this.timer);
+        this.getElapsedTimeMs = this.timer.getElapsedTimeMs.bind(this.timer);
         this.destroy = this.timer.destroy.bind(this.timer);
         this.getLength = this.timer.getLength.bind(this.timer);
         this.isRunning = this.timer.isRunning.bind(this.timer);

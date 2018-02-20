@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import TimerInjector from './TimerInjector.jsx';
 import TaskList from './TaskList.jsx';
 import TimerWithControls from './TimerWithControls.jsx';
+import Timer from '../Timer.js';
 
 export default class App extends Component {
 
@@ -44,8 +45,8 @@ export default class App extends Component {
         });
     }
 
-    completeTask(){
-        alert('task complete');
+    completeTask(msTimeElapsed){
+        alert('task complete' + Math.ceil(msTimeElapsed/1000));
     }
 
 }

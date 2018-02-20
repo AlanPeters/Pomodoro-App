@@ -11,7 +11,9 @@ export default class TimerWithControls extends Component {
     }
 
     finishedHandler(){
+        const timeSpent = this.props.timer.getElapsedTimeMs();
         this.props.timer.finish();
+        this.props.finishedHandler(timeSpent);
     }
 
     render(){

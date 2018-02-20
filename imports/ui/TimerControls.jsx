@@ -27,16 +27,12 @@ export default class TimerControls extends Component {
                 <button name="startStopButton" onClick={this.onStartStop}>
                     {startStopText}
                 </button>
-                {/*<button name="pauseButton" onClick={this.onPause}>*/}
-                    {/*{pauseText}*/}
-                {/*</button>*/}
             </div>
         );
     }
 
     onStartStop(){
         if(this.props.timer.isRunning()){
-            this.props.timer.stop();
             this.props.finishedHandler();
         } else {
             this.props.timer.start();
