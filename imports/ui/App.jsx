@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 
 import TimerInjector from './TimerInjector.jsx';
-import TaskList from './TaskList.jsx';
+import UiTaskList from './TaskList.jsx';
 import TimerWithControls from './TimerWithControls.jsx';
 import Timer from '../Timer.js';
+import TaskList from "../TaskList";
 
 export default class App extends Component {
 
@@ -11,15 +12,22 @@ export default class App extends Component {
         super(props);
         this.state = {
             timerLength: 1000 * 60 * 2,
-            currentTask: '',
         };
 
         this.setCurrentTask = this.setCurrentTask.bind(this);
         this.completeTask = this.completeTask.bind(this);
+
+        //temporary until new injector
+        this.taskList = new TaskList();
+        this.taskList.addListener(this.taskListChanegListener.bind(this));
     }
 
     render() {
         const Timer = TimerInjector(TimerWithControls);
+        let currentTaskDescription = '';
+        if(this.state.currentTask){
+            currentTaskDescription = this.state.currentTask.getDescription();
+        }
         return (
             <div className="app">
                 <h1>Pomodoro Tracker</h1>
@@ -27,26 +35,30 @@ export default class App extends Component {
                     timerLength={this.state.timerLength}
                     finishedHandler={this.completeTask}
                 />
-                <h2>Current Task: {this.state.currentTask}</h2>
-                <TaskList newTaskHandler={this.setCurrentTask} />
+                <h2>Current Task: {currentTaskDescription}</h2>
+                <UiTaskList
+                    newTaskHandler={this.setCurrentTask}
+                    taskList={this.taskList}
+                />
             </div>
         );
     }
 
-    setCurrentTask(currentTask){
-        let taskText;
-        if(currentTask) {
-            taskText = currentTask.text;
-        } else {
-            taskText = '';
-        }
+    setCurrentTask(){
+        const task = this.taskList.getUnfinishedTasks()[0];
         this.setState({
-            currentTask: taskText,
+            currentTask: task,
         });
     }
 
     completeTask(msTimeElapsed){
-        alert('task complete' + Math.ceil(msTimeElapsed/1000));
+        if(this.state.currentTask){
+            this.state.currentTask.addTime(msTimeElapsed);
+        }
+    }
+
+    taskListChanegListener(){
+        this.setCurrentTask();
     }
 
 }

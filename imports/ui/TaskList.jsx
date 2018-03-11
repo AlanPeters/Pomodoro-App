@@ -1,21 +1,22 @@
 import React, {Component} from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
-import { Tasks } from '../api/Tasks.js';
-
 import Task from './Task.jsx';
 import TaskForm from './TaskForm.jsx';
 
-class TaskList extends Component {
+export default class UiTaskList extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            tasks: this.props.taskList.getUnfinishedTasks(),
+        };
+
         this.addTask = this.addTask.bind(this);
-        console.log(this.getTasks()[0]);
-        this.props.newTaskHandler(this.getTasks()[0]);
+        this.taskListListener = this.taskListListener.bind(this);
     }
 
     render() {
-        const list = this.getTasks().map( (item, index) => {
+        const list = this.state.tasks.map( (item, index) => {
             return <Task task={item} key={index} />
         });
         return (
@@ -36,21 +37,21 @@ class TaskList extends Component {
         );
     }
 
-    getTasks(){
-        return this.props.tasks;
+    componentDidMount(){
+        this.props.taskList.addListener(this.taskListListener);
     }
 
-    addTask(task){
-        Tasks.insert(task);
+    componentWillUnmount(){
+        this.props.taskList.removeListener(this.taskListListener);
     }
 
-    componentWillReceiveProps(nextProps){
-        nextProps.newTaskHandler(nextProps.tasks[0]);
+    addTask(taskDescription){
+        this.props.taskList.createTask(taskDescription);
+    }
+
+    taskListListener(){
+        this.setState({
+            tasks: this.props.taskList.getUnfinishedTasks(),
+        });
     }
 }
-
-export default withTracker(() => {
-    return {
-        tasks: Tasks.find({}).fetch(),
-    };
-})(TaskList);

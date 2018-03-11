@@ -3,7 +3,7 @@
 export default class TaskList{
     constructor(){
         this.tasks = [];
-        this.listeners = [];
+        this.changeListeners = [];
     }
 
     getAllTasks(){
@@ -18,8 +18,18 @@ export default class TaskList{
         const task = new Task(description);
         this.tasks.push(task);
         this.notifyListeners();
-        task.addListener(this.taskChangeListener.bind(this));
+        task.addChangeListener(this.taskChangeListener.bind(this));
+        task.addDeleteListener(() => this.removeTask.bind(this)(task));
         return task;
+    }
+
+    removeTask(task){
+        task.removeChangeListener(this.taskChangeListener.bind(this))
+        const index = this.tasks.indexOf(task);
+        if(index >= 0){
+            this.tasks.splice(index, 1);
+        }
+        this.notifyListeners();
     }
 
     taskChangeListener(){
@@ -27,19 +37,28 @@ export default class TaskList{
     }
 
     addListener(newListener){
-        this.listeners.push(newListener);
+        this.changeListeners.push(newListener);
     }
 
     removeListener(oldListener){
-        const index = this.listeners.indexOf(oldListener);
+        const index = this.changeListeners.indexOf(oldListener);
         if(index >= 0 ){
-            this.listeners.splice(index, 1);
+            this.changeListeners.splice(index, 1);
         }
     }
 
     notifyListeners(){
-        this.listeners.map(listener => listener());
+        this.changeListeners.map(listener => listener());
     }
+
+    toJSON(){
+
+    }
+
+    fromJSON(json){
+
+    }
+
 }
 
 export class Task{
@@ -47,12 +66,13 @@ export class Task{
         this.description = description;
         this.doneStatus = false;
         this.timeSpent = 0;
-        this.listeners = [];
+        this.changeListeners = [];
+        this.deleteListeners = [];
     }
 
     setDescription(description) {
         this.description = description;
-        this.notifyListeners();
+        this.notifyChangeListeners();
     }
     getDescription() {
         return this.description;
@@ -68,26 +88,61 @@ export class Task{
 
     addTime(time){
         this.timeSpent += time;
-        this.notifyListeners();
+        this.notifyChangeListeners();
     }
 
     finish(){
         this.doneStatus = true;
-        this.notifyListeners();
+        this.notifyChangeListeners();
     }
 
-    addListener(newListener){
-        this.listeners.push(newListener);
+    addChangeListener(newListener){
+        this.changeListeners.push(newListener);
     }
 
-    removeListener(oldListener){
-        const index = this.listeners.indexOf(oldListener);
+    removeChangeListener(oldListener){
+        const index = this.changeListeners.indexOf(oldListener);
         if(index >= 0 ){
-            this.listeners.splice(index, 1);
+            this.changeListeners.splice(index, 1);
         }
     }
 
-    notifyListeners(){
-        this.listeners.map(listener => listener());
+    notifyChangeListeners(){
+        this.changeListeners.map(listener => listener());
     }
+
+    addDeleteListener(newListener){
+        this.deleteListeners.push(newListener);
+    }
+
+    removeDeleteListener(oldListener){
+        const index = this.deleteListeners.indexOf(oldListener);
+        if(index >= 0){
+            this.deleteListeners.splice(index, 1);
+        }
+    }
+
+    notifyDeleteListeners(){
+        this.deleteListeners.map(listener => listener());
+    }
+
+    delete(){
+        this.notifyDeleteListeners();
+    }
+
+    toJSON(){
+        return {
+            description: this.description,
+            doneStatus: this.doneStatus,
+            timeSpent: this.timeSpent,
+        };
+    }
+
+    static fromJSON(json){
+        const task = new Task(json.description);
+        task.timeSpent = json.timeSpent;
+        task.doneStatus = json.doneStatus;
+        return task;
+    }
+
 }

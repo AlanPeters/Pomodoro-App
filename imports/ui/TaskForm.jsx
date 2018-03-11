@@ -24,10 +24,7 @@ export default class TaskForm extends Component {
     }
 
     handleSubmit(event){
-        this.props.addTask({
-            text: this.state.name,
-            createdOn: new Date(),
-        });
+        this.props.addTask(this.state.name);
         this.setState({name: ""});
         event.preventDefault();
     }

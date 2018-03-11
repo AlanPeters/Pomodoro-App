@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import { Tasks } from '../api/Tasks.js';
 
 export default class Task extends Component {
     constructor(props){
@@ -8,17 +7,18 @@ export default class Task extends Component {
     }
 
     deleteTask(){
-        Tasks.remove(this.props.task._id);
+        this.props.task.finish();
     }
 
     render(){
         return (
             <tr>
-                <td>{this.props.task.text}</td>
+                <td>{this.props.task.getDescription()}</td>
                 <td>
-                    <button onClick={this.deleteTask}>Delete</button>
+                    <button onClick={this.deleteTask}>Finish</button>
                 </td>
-                <td colSpan={4} />
+                <td>{this.props.task.getTimeSpent()}</td>
+                <td colSpan={3} />
             </tr>
         )
     }

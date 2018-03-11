@@ -91,6 +91,22 @@ describe('TaskList', function() {
         });
     });
 
+    describe('Deleted Tasks', function(){
+        var taskList;
+        var mySpy;
+        beforeEach(function(){
+            taskList = new TaskList();
+            mySpy = sinon.spy();
+        });
+        it('calls removes the deleted task from the list', function(){
+            taskList = new TaskList();
+            const task = taskList.createTask('test');
+            assert.equal(taskList.getAllTasks().length, 1);
+            task.delete();
+            assert.equal(taskList.getAllTasks().length, 0);
+        });
+    });
+
 
 });
 
@@ -144,6 +160,16 @@ describe('Task', function (){
         });
     });
 
+    describe('delete',function(){
+        it('should call the delete listeners',function(){
+            const task = new Task('test');
+            const mySpy = sinon.spy();
+            task.addDeleteListener(mySpy);
+            task.delete();
+            assert.equal(mySpy.callCount, 1);
+        });
+    });
+
     describe('Call Backs',function() {
         var description = 'Initial Description';
         var task;
@@ -152,37 +178,61 @@ describe('Task', function (){
             mySpy = sinon.spy();
             task = new Task(description);
         });
-        it('calls the callback on a description change',function() {
-            task.addListener(mySpy);
+        it('calls the change callback on a description change',function() {
+            task.addChangeListener(mySpy);
             task.setDescription('New Description');
             assert.equal(mySpy.callCount,1);
         });
-        it('calls the callback on a time change', function() {
-            task.addListener(mySpy);
+        it('calls the change callback on a time change', function() {
+            task.addChangeListener(mySpy);
             task.addTime(1000);
             assert.equal(mySpy.callCount, 1);
         });
-        it('calls the callback on a finish event', function(){
-            task.addListener(mySpy);
+        it('calls the change callback on a finish event', function(){
+            task.addChangeListener(mySpy);
             task.finish();
             assert.equal(mySpy.callCount, 1);
         });
-        it('calls multiple registered callbacks', function(){
-            task.addListener(mySpy);
+        it('calls multiple registered change callbacks', function(){
+            task.addChangeListener(mySpy);
             const mySpy2 = sinon.spy();
-            task.addListener(mySpy2);
+            task.addChangeListener(mySpy2);
             task.setDescription('new description');
             assert.equal(mySpy.callCount,1);
             assert.equal(mySpy2.callCount,1);
         });
-        it('does not call a removed callback', function() {
-            task.addListener(mySpy);
+        it('does not call a removed change callback', function() {
+            task.addChangeListener(mySpy);
             task.setDescription('test');
             assert.equal(mySpy.callCount, 1);
-            task.removeListener(mySpy);
+            task.removeChangeListener(mySpy);
             task.setDescription('test 2');
             assert.equal(mySpy.callCount, 1);
         });
     });
 
+    describe('To JSON', function(){
+        it('Copies the state of to a json object', function(){
+            const task = new Task('Test');
+            const toJSON = task.toJSON();
+            const expectedJSON = { description: 'Test',
+            timeSpent: 0,
+            doneStatus: false };
+            assert.deepEqual(toJSON, expectedJSON);
+            assert.equal(toJSON.description, expectedJSON.description);
+            assert.equal(toJSON.timeSpent, expectedJSON.timeSpent);
+            assert.equal(toJSON.doneStatus, expectedJSON.doneStatus);
+        });
+    });
+    describe('From JSON', function(){
+        it('creates a new Task with the passed in parameters', function(){
+            const json = {
+                description: 'Test Task',
+                timeSpent: 2500,
+                doneStatus: true,
+            };
+            const task = Task.fromJSON(json);
+            assert.equal(task.getDescription(), json.description);
+        });
+    });
 });
