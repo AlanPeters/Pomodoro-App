@@ -19,6 +19,7 @@ export default class UiTaskList extends Component {
         const list = this.state.tasks.map( (item, index) => {
             return <Task task={item} key={index} />
         });
+
         return (
             <div>
                 <TaskForm addTask={this.addTask} />

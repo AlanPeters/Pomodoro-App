@@ -32,10 +32,6 @@ export default class TaskList{
         this.notifyListeners();
     }
 
-    taskChangeListener(){
-        this.notifyListeners();
-    }
-
     addListener(newListener){
         this.changeListeners.push(newListener);
     }
@@ -45,6 +41,10 @@ export default class TaskList{
         if(index >= 0 ){
             this.changeListeners.splice(index, 1);
         }
+    }
+
+    taskChangeListener(){
+        this.notifyListeners();
     }
 
     notifyListeners(){
