@@ -46,7 +46,8 @@ export default class Timer {
 
     startInterval(){
         if(!this.timerInterval && this.tickListener){
-            this.timerInterval = setTimeout(() => {
+            this.timerInterval = setInterval(() => {
+                this.stopInterval();
                 this.timerInterval = setInterval(
                     () => this.tick(),
                     200);

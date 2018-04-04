@@ -16,11 +16,15 @@ export default class TaskList{
 
     createTask(description){
         const task = new Task(description);
+        this.insertTask(task);
+        return task;
+    }
+
+    insertTask(task){
         this.tasks.push(task);
         this.notifyListeners();
         task.addChangeListener(this.taskChangeListener.bind(this));
         task.addDeleteListener(() => this.removeTask.bind(this)(task));
-        return task;
     }
 
     removeTask(task){
@@ -49,14 +53,6 @@ export default class TaskList{
 
     notifyListeners(){
         this.changeListeners.map(listener => listener());
-    }
-
-    toJSON(){
-
-    }
-
-    fromJSON(json){
-
     }
 
 }
