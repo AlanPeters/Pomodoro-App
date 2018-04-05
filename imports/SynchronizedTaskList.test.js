@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import sinon from 'sinon';
 import { Tasks } from './api/Tasks.js';
-import SynchronizedTaskList from './SynchronizedTaskList.js';
+import SynchronizedTaskList from './SynchronizedTask.js';
 
 describe('Synchronized Task List', function(){
     describe('Create Tasks', function(){

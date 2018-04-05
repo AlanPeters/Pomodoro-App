@@ -37,15 +37,14 @@ export default class App extends Component {
                 />
                 <h2>Current Task: {currentTaskDescription}</h2>
                 <UiTaskList
-                    newTaskHandler={this.setCurrentTask}
+                    currentTaskHandler={this.setCurrentTask}
                     taskList={this.taskList}
                 />
             </div>
         );
     }
 
-    setCurrentTask(){
-        const task = this.taskList.getUnfinishedTasks()[0];
+    setCurrentTask(task){
         this.setState({
             currentTask: task,
         });

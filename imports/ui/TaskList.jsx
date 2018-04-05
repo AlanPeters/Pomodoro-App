@@ -1,22 +1,20 @@
 import React, {Component} from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
+import { Tasks } from '../api/Tasks.js';
 
 import Task from './Task.jsx';
 import TaskForm from './TaskForm.jsx';
+import SynchronizedTask from '../SynchronizedTask.js';
 
-export default class UiTaskList extends Component {
+class UiTaskList extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            tasks: this.props.taskList.getUnfinishedTasks(),
-        };
 
         this.addTask = this.addTask.bind(this);
-        this.taskListListener = this.taskListListener.bind(this);
     }
 
     render() {
-        const list = this.state.tasks.map( (item, index) => {
+        const list = this.props.tasks.map( (item, index) => {
             return <Task task={item} key={index} />
         });
 
@@ -39,20 +37,32 @@ export default class UiTaskList extends Component {
     }
 
     componentDidMount(){
-        this.props.taskList.addListener(this.taskListListener);
+        if(this.props.tasks[0]){
+            this.props.currentTaskHandler(this.props.tasks[0]);
+        }
+    }
+    componentWillReceiveProps(nextProps){
+        if(nextProps.tasks[0]){
+            nextProps.currentTaskHandler(nextProps.tasks[0]);
+        }
     }
 
     componentWillUnmount(){
-        this.props.taskList.removeListener(this.taskListListener);
     }
 
     addTask(taskDescription){
-        this.props.taskList.createTask(taskDescription);
+        SynchronizedTask.addTask(taskDescription);
     }
 
-    taskListListener(){
-        this.setState({
-            tasks: this.props.taskList.getUnfinishedTasks(),
-        });
-    }
 }
+
+export default withTracker(() => {
+    const tasks = Tasks.find({}).fetch();
+
+    return {
+        tasks: tasks.map((task) => {
+            return new SynchronizedTask(task);
+        }
+        )};
+})(UiTaskList);
+

@@ -15,7 +15,7 @@ export default class Task extends Component {
         const displayTime = Timer.convertMsToHoursMinsSecs(this.props.task.getTimeSpent());
         const minutes = displayTime.minutes.toString().padStart(2,"0")
         const seconds = displayTime.seconds.toString().padStart(2,"0");
-        const hours =displayTime.hours.toString()+":";
+        const hours = displayTime.hours.toString()+":";
         return (
             <tr>
                 <td>{this.props.task.getDescription()}</td>
