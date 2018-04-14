@@ -5,6 +5,8 @@ import UiTaskList from './TaskList.jsx';
 import TimerWithControls from './TimerWithControls.jsx';
 import Timer from '../Timer.js';
 import TaskList from "../TaskList";
+import {button} from 'react-bootstrap';
+import { Grid, Row, Col, Jumbotron} from 'react-bootstrap';
 
 export default class App extends Component {
 
@@ -30,16 +32,32 @@ export default class App extends Component {
         }
         return (
             <div className="app">
-                <h1>Pomodoro Tracker</h1>
-                <Timer
-                    timerLength={this.state.timerLength}
-                    finishedHandler={this.completeTask}
-                />
-                <h2>Current Task: {currentTaskDescription}</h2>
-                <UiTaskList
-                    currentTaskHandler={this.setCurrentTask}
-                    taskList={this.taskList}
-                />
+                <Grid>
+                        <Jumbotron>
+                            <h1>Pomodoro Tracker</h1>
+                        </Jumbotron>
+                    <Row>
+                        <Col lg={6}>
+                            <Timer
+                                timerLength={this.state.timerLength}
+                                finishedHandler={this.completeTask}
+                            />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={6}>
+                            <h2>Current Task: {currentTaskDescription}</h2>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={6}>
+                            <UiTaskList
+                                currentTaskHandler={this.setCurrentTask}
+                                taskList={this.taskList}
+                            />
+                        </Col>
+                    </Row>
+                </Grid>
             </div>
         );
     }
