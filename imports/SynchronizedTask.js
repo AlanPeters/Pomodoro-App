@@ -1,6 +1,4 @@
-import TaskList from './TaskList.js';
 import { Tasks }  from './api/Tasks.js';
-import {Task} from "./TaskList";
 
 
 export default class SynchronizedTask{
