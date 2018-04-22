@@ -3,14 +3,12 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Tasks } from '../api/Tasks.js';
 
 import Task from './Task.jsx';
-import TaskForm from './TaskForm.jsx';
 import SynchronizedTask from '../SynchronizedTask.js';
 
 class UiTaskList extends Component {
     constructor(props) {
         super(props);
 
-        this.addTask = this.addTask.bind(this);
     }
 
     render() {
@@ -20,7 +18,6 @@ class UiTaskList extends Component {
 
         return (
             <div>
-                <TaskForm addTask={this.addTask} />
                 <table>
                     <tbody>
                         <tr>
@@ -37,12 +34,14 @@ class UiTaskList extends Component {
     }
 
     componentDidMount(){
-        if(this.props.tasks[0]){
-            this.props.currentTaskHandler(this.props.tasks[0]);
+        if(this.props.tasks[0]) {
+            if (this.props.currencTaskHandler) {
+                this.props.currentTaskHandler(this.props.tasks[0]);
+            }
         }
     }
     componentWillReceiveProps(nextProps){
-        if(nextProps.tasks[0]){
+        if(nextProps.tasks[0] && nextProps.currentTaskHandler){
             nextProps.currentTaskHandler(nextProps.tasks[0]);
         }
     }
@@ -50,14 +49,14 @@ class UiTaskList extends Component {
     componentWillUnmount(){
     }
 
-    addTask(taskDescription){
-        SynchronizedTask.addTask(taskDescription);
-    }
+
 
 }
 
-export default withTracker(() => {
-    const tasks = Tasks.find({}).fetch();
+export default withTracker(({type}) => {
+    const isDone = type !== 'current';
+    console.log(type);
+    const tasks = Tasks.find({isDone:isDone}).fetch();
 
     return {
         tasks: tasks.map((task) => {

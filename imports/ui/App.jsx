@@ -5,8 +5,9 @@ import UiTaskList from './TaskList.jsx';
 import TimerWithControls from './TimerWithControls.jsx';
 import Timer from '../Timer.js';
 import TaskList from "../TaskList";
-import {button} from 'react-bootstrap';
 import { Grid, Row, Col, Jumbotron} from 'react-bootstrap';
+import SynchronizedTask from '../SynchronizedTask.js';
+import TaskForm from './TaskForm.jsx';
 
 export default class App extends Component {
 
@@ -18,10 +19,7 @@ export default class App extends Component {
 
         this.setCurrentTask = this.setCurrentTask.bind(this);
         this.completeTask = this.completeTask.bind(this);
-
-        //temporary until new injector
-        this.taskList = new TaskList();
-        this.taskList.addListener(this.taskListChanegListener.bind(this));
+        this.addTask = this.addTask.bind(this);
     }
 
     render() {
@@ -50,11 +48,20 @@ export default class App extends Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Col lg={6}>
+                        <Col md={12}>
+                            <TaskForm addTask={this.addTask} />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md={6}>
                             <UiTaskList
+                                type={'current'}
                                 currentTaskHandler={this.setCurrentTask}
                                 taskList={this.taskList}
                             />
+                        </Col>
+                        <Col md={6}>
+                            <UiTaskList type={'past'} />
                         </Col>
                     </Row>
                 </Grid>
@@ -78,4 +85,7 @@ export default class App extends Component {
         this.setCurrentTask();
     }
 
+    addTask(taskDescription){
+        SynchronizedTask.addTask(taskDescription);
+    }
 }

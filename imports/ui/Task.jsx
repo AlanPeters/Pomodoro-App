@@ -33,7 +33,9 @@ export default class Task extends Component {
                     hours={hours}
                     minutes={minutes}
                     seconds={seconds}
-                    description={description}/>
+                    description={description}
+                    finishTask={this.deleteTask}
+                />
             );
         }
     }
@@ -61,7 +63,7 @@ function CurrentTask(props) {
                 <p>{props.description}</p>
             </td>
             <td>
-                <Button>Finish</Button>
+                <Button onClick={props.finishTask}>Finish</Button>
             </td>
             <td>{props.hours}{props.minutes}:{props.seconds}</td>
             <td colSpan={3} />
