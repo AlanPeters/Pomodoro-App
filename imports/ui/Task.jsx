@@ -1,14 +1,15 @@
 import React, {Component} from 'react';
 import Timer from '../Timer.js';
-import {Button} from 'react-bootstrap';
+import {Label, Grid, Row, Col, ListGroup, ListGroupItem, Button} from 'react-bootstrap';
 
 export default class Task extends Component {
     constructor(props) {
         super(props);
-        this.deleteTask = this.deleteTask.bind(this);
+        this.finishTask = this.finishTask.bind(this);
     }
 
-    deleteTask() {
+    finishTask() {
+        alert('test');
         this.props.task.finish();
     }
 
@@ -34,7 +35,7 @@ export default class Task extends Component {
                     minutes={minutes}
                     seconds={seconds}
                     description={description}
-                    finishTask={this.deleteTask}
+                    finishTask={this.finishTask}
                 />
             );
         }
@@ -43,31 +44,19 @@ export default class Task extends Component {
 
 function FinishedTask(props){
     return (
-        <tr>
-            <td>
-                <del>{props.description}</del>
-            </td>
-            <td>
-                <Button disabled>Finished</Button>
-            </td>
-            <td>{props.hours}{props.minutes}:{props.seconds}</td>
-            <td colSpan={3} />
-        </tr>
+        <ListGroupItem header={<del><h4>{props.description}</h4></del>}>
+            <Button disabled>Finished</Button>
+            <Label>{props.hours}{props.minutes}:{props.seconds}</Label>
+        </ListGroupItem>
     );
 }
 
 function CurrentTask(props) {
     return (
-        <tr>
-            <td>
-                <p>{props.description}</p>
-            </td>
-            <td>
-                <Button onClick={props.finishTask}>Finish</Button>
-            </td>
-            <td>{props.hours}{props.minutes}:{props.seconds}</td>
-            <td colSpan={3} />
-        </tr>
+        <ListGroupItem header={<h4>{props.description}</h4>}>
+            <Button onClick={props.finishTask}>Finish</Button>
+            <Label>{props.hours}{props.minutes}:{props.seconds}</Label>
+        </ListGroupItem>
     );
 }
 

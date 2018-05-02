@@ -35,7 +35,7 @@ export default class App extends Component {
                             <h1>Pomodoro Tracker</h1>
                         </Jumbotron>
                     <Row>
-                        <Col lg={6}>
+                        <Col lg={12}>
                             <Timer
                                 timerLength={this.state.timerLength}
                                 finishedHandler={this.completeTask}
@@ -43,8 +43,8 @@ export default class App extends Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Col lg={6}>
-                            <h2>Current Task: {currentTaskDescription}</h2>
+                        <Col lg={12}>
+                            <h2 className={'text-center'}>Current Task: {currentTaskDescription}</h2>
                         </Col>
                     </Row>
                     <Row>

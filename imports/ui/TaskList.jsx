@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Tasks } from '../api/Tasks.js';
+import {SortableContainer, SortableElement} from 'react-sortable-hoc';
+import {ListGroup, ListGroupItem, Button} from 'react-bootstrap';
+
 
 import Task from './Task.jsx';
 import SynchronizedTask from '../SynchronizedTask.js';
@@ -18,17 +21,9 @@ class UiTaskList extends Component {
 
         return (
             <div>
-                <table>
-                    <tbody>
-                        <tr>
-                            <th>Task Name</th>
-                            <th colSpan={2} />
-                            <th>Pomodoro Number</th>
-                            <th />
-                        </tr>
-                        { list }
-                    </tbody>
-                </table>
+                <ListGroup>
+                    { list }
+                </ListGroup>
             </div>
         );
     }
@@ -55,7 +50,6 @@ class UiTaskList extends Component {
 
 export default withTracker(({type}) => {
     const isDone = type !== 'current';
-    console.log(type);
     const tasks = Tasks.find({isDone:isDone}).fetch();
 
     return {
