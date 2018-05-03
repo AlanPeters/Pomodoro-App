@@ -21,9 +21,7 @@ class UiTaskList extends Component {
 
         return (
             <div>
-                <ListGroup>
-                    { list }
-                </ListGroup>
+                <SortableList items={this.props.tasks} />
             </div>
         );
     }
@@ -47,6 +45,20 @@ class UiTaskList extends Component {
 
 
 }
+
+const SortableItem = SortableElement(({task}) =>
+    <Task task={task} />
+);
+
+const SortableList = SortableContainer(({items}) => {
+    return (
+        <ListGroup>
+            {items.map((task, index) => (
+                <SortableItem key={`item-${index}`} index={index} task={task} />
+            ))}
+        </ListGroup>
+    );
+});
 
 export default withTracker(({type}) => {
     const isDone = type !== 'current';

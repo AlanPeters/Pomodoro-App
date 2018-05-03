@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Timer from '../Timer.js';
 import {Label, Grid, Row, Col, ListGroup, ListGroupItem, Button} from 'react-bootstrap';
+import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 
 export default class Task extends Component {
     constructor(props) {
@@ -41,6 +42,8 @@ export default class Task extends Component {
         }
     }
 }
+
+
 
 function FinishedTask(props){
     return (
