@@ -38,6 +38,12 @@ export default class SynchronizedTask{
         });
     }
 
+    setOrder(order){
+        Tasks.update(this.task._id,{
+            $set:  {order:order}
+        });
+    }
+
     delete(){
         Tasks.remove(this.task._id);
     }

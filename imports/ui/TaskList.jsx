@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Tasks } from '../api/Tasks.js';
-import {SortableContainer, SortableElement} from 'react-sortable-hoc';
+import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 import {ListGroup, ListGroupItem, Button} from 'react-bootstrap';
 
 
@@ -11,24 +11,22 @@ import SynchronizedTask from '../SynchronizedTask.js';
 class UiTaskList extends Component {
     constructor(props) {
         super(props);
-
+        this.reorderTasks = this.reorderTasks.bind(this);
     }
 
     render() {
-        const list = this.props.tasks.map( (item, index) => {
-            return <Task task={item} key={index} />
-        });
-
         return (
             <div>
-                <SortableList items={this.props.tasks} />
+                <SortableList
+                    items={this.props.tasks}
+                    onSortEnd={this.reorderTasks}/>
             </div>
         );
     }
 
     componentDidMount(){
         if(this.props.tasks[0]) {
-            if (this.props.currencTaskHandler) {
+            if (this.props.currentTaskHandler) {
                 this.props.currentTaskHandler(this.props.tasks[0]);
             }
         }
@@ -39,10 +37,11 @@ class UiTaskList extends Component {
         }
     }
 
-    componentWillUnmount(){
+    reorderTasks({oldIndex, newIndex}){
+        const newList = arrayMove(this.props.tasks.slice(), oldIndex, newIndex);
+        newList.map((task, index) => task.setOrder(index));
+
     }
-
-
 
 }
 
@@ -62,7 +61,7 @@ const SortableList = SortableContainer(({items}) => {
 
 export default withTracker(({type}) => {
     const isDone = type !== 'current';
-    const tasks = Tasks.find({isDone:isDone}).fetch();
+    const tasks = Tasks.find({isDone:isDone}).fetch().sort((a, b) => a.order-b.order);
 
     return {
         tasks: tasks.map((task) => {
