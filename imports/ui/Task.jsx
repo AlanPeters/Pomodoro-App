@@ -1,20 +1,20 @@
 import React, {Component} from 'react';
 import Timer from '../Timer.js';
-import {Button} from 'react-bootstrap';
+import {Label, ListGroupItem, Button} from 'react-bootstrap';
 
 export default class Task extends Component {
     constructor(props) {
         super(props);
-        this.deleteTask = this.deleteTask.bind(this);
+        this.finishTask = this.finishTask.bind(this);
     }
 
-    deleteTask() {
+    finishTask() {
         this.props.task.finish();
     }
 
     render() {
         const displayTime = Timer.convertMsToHoursMinsSecs(this.props.task.getTimeSpent());
-        const minutes = displayTime.minutes.toString().padStart(2, "0")
+        const minutes = displayTime.minutes.toString().padStart(2, "0");
         const seconds = displayTime.seconds.toString().padStart(2, "0");
         const hours = displayTime.hours.toString() + ":";
         const isFinished = this.props.task.isDone();
@@ -33,39 +33,31 @@ export default class Task extends Component {
                     hours={hours}
                     minutes={minutes}
                     seconds={seconds}
-                    description={description}/>
+                    description={description}
+                    finishTask={this.finishTask}
+                />
             );
         }
     }
 }
 
+
+
 function FinishedTask(props){
     return (
-        <tr>
-            <td>
-                <del>{props.description}</del>
-            </td>
-            <td>
-                <Button disabled>Finished</Button>
-            </td>
-            <td>{props.hours}{props.minutes}:{props.seconds}</td>
-            <td colSpan={3} />
-        </tr>
+        <ListGroupItem header={<del><h4>{props.description}</h4></del>} >
+            <Button disabled>Finished</Button>
+            <Label>{props.hours}{props.minutes}:{props.seconds}</Label>
+        </ListGroupItem>
     );
 }
 
 function CurrentTask(props) {
     return (
-        <tr>
-            <td>
-                <p>{props.description}</p>
-            </td>
-            <td>
-                <Button>Finish</Button>
-            </td>
-            <td>{props.hours}{props.minutes}:{props.seconds}</td>
-            <td colSpan={3} />
-        </tr>
+        <ListGroupItem header={<h4>{props.description}</h4>} >
+            <Button onClick={props.finishTask}>Finish</Button>
+            <Label>{props.hours}{props.minutes}:{props.seconds}</Label>
+        </ListGroupItem>
     );
 }
 

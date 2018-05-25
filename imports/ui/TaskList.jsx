@@ -1,63 +1,69 @@
 import React, {Component} from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Tasks } from '../api/Tasks.js';
+import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
+import {ListGroup} from 'react-bootstrap';
+
 
 import Task from './Task.jsx';
-import TaskForm from './TaskForm.jsx';
 import SynchronizedTask from '../SynchronizedTask.js';
 
 class UiTaskList extends Component {
     constructor(props) {
         super(props);
-
-        this.addTask = this.addTask.bind(this);
+        this.reorderTasks = this.reorderTasks.bind(this);
     }
 
     render() {
-        const list = this.props.tasks.map( (item, index) => {
-            return <Task task={item} key={index} />
-        });
-
         return (
             <div>
-                <TaskForm addTask={this.addTask} />
-                <table>
-                    <tbody>
-                        <tr>
-                            <th>Task Name</th>
-                            <th colSpan={2} />
-                            <th>Pomodoro Number</th>
-                            <th />
-                        </tr>
-                        { list }
-                    </tbody>
-                </table>
+                <SortableList
+                    items={this.props.tasks}
+                    onSortEnd={this.reorderTasks}
+                />
             </div>
         );
     }
 
     componentDidMount(){
-        if(this.props.tasks[0]){
-            this.props.currentTaskHandler(this.props.tasks[0]);
+        if(this.props.tasks[0]) {
+            if (this.props.currentTaskHandler) {
+                this.props.currentTaskHandler(this.props.tasks[0]);
+            }
         }
     }
     componentWillReceiveProps(nextProps){
-        if(nextProps.tasks[0]){
+        if(nextProps.tasks[0] && nextProps.currentTaskHandler){
             nextProps.currentTaskHandler(nextProps.tasks[0]);
         }
     }
 
-    componentWillUnmount(){
-    }
-
-    addTask(taskDescription){
-        SynchronizedTask.addTask(taskDescription);
+    reorderTasks({oldIndex, newIndex}){
+        const newList = arrayMove(this.props.tasks.slice(), oldIndex, newIndex);
+        newList.map((task, index) => task.setOrder(index));
     }
 
 }
 
-export default withTracker(() => {
-    const tasks = Tasks.find({}).fetch();
+const SortableItem = SortableElement(({task}) =>
+    <Task task={task} />
+);
+
+const SortableList = SortableContainer(({items}) => {
+    return (
+        <ListGroup componentClass="ul">
+            {
+                items.map((task, index) => (
+                    <SortableItem key={`item-${index}`} index={index} task={task} />
+                ))
+            }
+        </ListGroup>
+    )
+});
+
+export default withTracker(({type}) => {
+    const isDone = type !== 'current';
+    const tasks = Tasks.find({isDone:isDone}).fetch().sort((a, b) => a.order-b.order);
 
     return {
         tasks: tasks.map((task) => {
