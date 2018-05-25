@@ -57,7 +57,6 @@ export default class App extends Component {
                             <UiTaskList
                                 type={'current'}
                                 currentTaskHandler={this.setCurrentTask}
-                                taskList={this.taskList}
                             />
                         </Col>
                         <Col md={6}>

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Tasks } from '../api/Tasks.js';
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
-import {ListGroup, ListGroupItem, Button} from 'react-bootstrap';
+import {ListGroup} from 'react-bootstrap';
 
 
 import Task from './Task.jsx';
@@ -19,7 +19,8 @@ class UiTaskList extends Component {
             <div>
                 <SortableList
                     items={this.props.tasks}
-                    onSortEnd={this.reorderTasks}/>
+                    onSortEnd={this.reorderTasks}
+                />
             </div>
         );
     }
@@ -40,7 +41,6 @@ class UiTaskList extends Component {
     reorderTasks({oldIndex, newIndex}){
         const newList = arrayMove(this.props.tasks.slice(), oldIndex, newIndex);
         newList.map((task, index) => task.setOrder(index));
-
     }
 
 }
@@ -51,12 +51,14 @@ const SortableItem = SortableElement(({task}) =>
 
 const SortableList = SortableContainer(({items}) => {
     return (
-        <ListGroup>
-            {items.map((task, index) => (
-                <SortableItem key={`item-${index}`} index={index} task={task} />
-            ))}
+        <ListGroup componentClass="ul">
+            {
+                items.map((task, index) => (
+                    <SortableItem key={`item-${index}`} index={index} task={task} />
+                ))
+            }
         </ListGroup>
-    );
+    )
 });
 
 export default withTracker(({type}) => {
