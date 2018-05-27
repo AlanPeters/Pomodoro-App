@@ -4,8 +4,14 @@ import TimerInjector from './TimerInjector.jsx';
 import UiTaskList from './TaskList.jsx';
 import TimerWithControls from './TimerWithControls.jsx';
 import Timer from '../Timer.js';
-import TaskList from "../TaskList";
-import { Grid, Row, Col, Jumbotron} from 'react-bootstrap';
+import {
+    Grid,
+    Row,
+    Col,
+    Jumbotron,
+    Tabs,
+    Tab
+    } from 'react-bootstrap';
 import SynchronizedTask from '../SynchronizedTask.js';
 import TaskForm from './TaskForm.jsx';
 
@@ -53,14 +59,24 @@ export default class App extends Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Col md={6}>
-                            <UiTaskList
-                                type={'current'}
-                                currentTaskHandler={this.setCurrentTask}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <UiTaskList type={'past'} />
+                        <Col ml={12}>
+                            <Tabs defaultActiveKey={1}>
+                                <Tab eventKey={1} title="Tasks">
+                                    <Row>
+                                        <Col md={6}>
+                                            <UiTaskList
+                                                type={'current'}
+                                                currentTaskHandler={this.setCurrentTask}
+                                            />
+                                        </Col>
+                                        <Col md={6}>
+                                            <UiTaskList type={'past'} />
+                                        </Col>
+                                    </Row>
+                                </Tab>
+                                <Tab eventKey={2} title="Configuration">
+                                </Tab>
+                            </Tabs>
                         </Col>
                     </Row>
                 </Grid>
