@@ -14,6 +14,8 @@ import {
     } from 'react-bootstrap';
 import SynchronizedTask from '../SynchronizedTask.js';
 import TaskForm from './TaskForm.jsx';
+import Configuration from './Configuration.jsx';
+
 
 export default class App extends Component {
 
@@ -26,6 +28,7 @@ export default class App extends Component {
         this.setCurrentTask = this.setCurrentTask.bind(this);
         this.completeTask = this.completeTask.bind(this);
         this.addTask = this.addTask.bind(this);
+        this.setTimerLength = this.setTimerLength.bind(this);
     }
 
     render() {
@@ -60,7 +63,7 @@ export default class App extends Component {
                     </Row>
                     <Row>
                         <Col ml={12}>
-                            <Tabs defaultActiveKey={1}>
+                            <Tabs defaultActiveKey={1} id="mainTabs">
                                 <Tab eventKey={1} title="Tasks">
                                     <Row>
                                         <Col md={6}>
@@ -75,6 +78,8 @@ export default class App extends Component {
                                     </Row>
                                 </Tab>
                                 <Tab eventKey={2} title="Configuration">
+                                    <Configuration time={this.state.timerLength}
+                                    setTime={this.setTimerLength}/>
                                 </Tab>
                             </Tabs>
                         </Col>
@@ -94,6 +99,12 @@ export default class App extends Component {
         if(this.state.currentTask){
             this.state.currentTask.addTime(msTimeElapsed);
         }
+    }
+
+    setTimerLength(time){
+        this.setState({
+            timerLength:time,
+        });
     }
 
     taskListChanegListener(){
