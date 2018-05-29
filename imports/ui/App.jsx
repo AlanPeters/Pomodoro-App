@@ -1,25 +1,38 @@
 import React, { Component } from 'react';
+import {withTracker} from 'meteor/react-meteor-data';
+
+import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 
 import TimerInjector from './TimerInjector.jsx';
 import UiTaskList from './TaskList.jsx';
 import TimerWithControls from './TimerWithControls.jsx';
 import Timer from '../Timer.js';
-import TaskList from "../TaskList";
-import { Grid, Row, Col, Jumbotron} from 'react-bootstrap';
+import {
+    Grid,
+    Row,
+    Col,
+    Jumbotron,
+    Tabs,
+    Tab
+} from 'react-bootstrap';
 import SynchronizedTask from '../SynchronizedTask.js';
 import TaskForm from './TaskForm.jsx';
+import Configuration from './Configuration.jsx';
+import {Configuration as ConfigState} from '../api/Configuration';
 
-export default class App extends Component {
+
+class App extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            timerLength: 1000 * 60 * 2,
+            timerLength: this.props.configuration || 25*60*1000,
         };
 
         this.setCurrentTask = this.setCurrentTask.bind(this);
         this.completeTask = this.completeTask.bind(this);
         this.addTask = this.addTask.bind(this);
+        this.setTimerLength = this.setTimerLength.bind(this);
     }
 
     render() {
@@ -30,6 +43,7 @@ export default class App extends Component {
         }
         return (
             <div className="app">
+                <AccountsUIWrapper />
                 <Grid>
                         <Jumbotron>
                             <h1>Pomodoro Tracker</h1>
@@ -53,14 +67,26 @@ export default class App extends Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Col md={6}>
-                            <UiTaskList
-                                type={'current'}
-                                currentTaskHandler={this.setCurrentTask}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <UiTaskList type={'past'} />
+                        <Col ml={12}>
+                            <Tabs defaultActiveKey={1} id="mainTabs">
+                                <Tab eventKey={1} title="Tasks">
+                                    <Row>
+                                        <Col md={6}>
+                                            <UiTaskList
+                                                type={'current'}
+                                                currentTaskHandler={this.setCurrentTask}
+                                            />
+                                        </Col>
+                                        <Col md={6}>
+                                            <UiTaskList type={'past'} />
+                                        </Col>
+                                    </Row>
+                                </Tab>
+                                <Tab eventKey={2} title="Configuration">
+                                    <Configuration time={this.state.timerLength}
+                                    setTime={this.setTimerLength}/>
+                                </Tab>
+                            </Tabs>
                         </Col>
                     </Row>
                 </Grid>
@@ -80,6 +106,12 @@ export default class App extends Component {
         }
     }
 
+    setTimerLength(time){
+        this.setState({
+            timerLength:time,
+        });
+    }
+
     taskListChanegListener(){
         this.setCurrentTask();
     }
@@ -88,3 +120,9 @@ export default class App extends Component {
         SynchronizedTask.addTask(taskDescription);
     }
 }
+
+export default withTracker(() => {
+    return {
+        configuration: ConfigState.find().fetch()[0],
+    }
+})(App);
