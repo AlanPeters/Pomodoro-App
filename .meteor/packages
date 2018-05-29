@@ -23,3 +23,5 @@ react-meteor-data
 meteortesting:mocha
 fourseven:scss
 twbs:bootstrap
+accounts-ui
+accounts-password

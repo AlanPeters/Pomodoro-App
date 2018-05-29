@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import {withTracker} from 'meteor/react-meteor-data';
 
+import AccountsUIWrapper from './AccountsUIWrapper.jsx';
+
 import TimerInjector from './TimerInjector.jsx';
 import UiTaskList from './TaskList.jsx';
 import TimerWithControls from './TimerWithControls.jsx';
@@ -41,6 +43,7 @@ class App extends Component {
         }
         return (
             <div className="app">
+                <AccountsUIWrapper />
                 <Grid>
                         <Jumbotron>
                             <h1>Pomodoro Tracker</h1>
