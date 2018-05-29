@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import JSTimer from '../SynchronizedTimer.js';
+import {withTracker} from 'meteor/react-meteor-data';
+import {Timer as TimerState} from '../api/Timer.js';
+import {TIMER_STATE} from '../enums/TimerState.js';
 // import JSTimer from '../Timer.js';
-
-import { withTracker } from 'meteor/react-meteor-data';
-import { Timer as TimerState } from '../api/Timer.js';
-import { TIMER_STATE } from '../enums/TimerState.js';
 
 
 export default function (WrappedComponent) {
@@ -49,11 +48,11 @@ export default function (WrappedComponent) {
             }
 
             render() {
-                const {timerState, timerLength, ...passthroughProps} = this.props;
+                const {timerState, timerLength, ...passThroughProps} = this.props;
                 return (
                     <WrappedComponent
                         timer={this.state.timer}
-                        {...passthroughProps} />
+                        {...passThroughProps} />
                 );
             }
         };

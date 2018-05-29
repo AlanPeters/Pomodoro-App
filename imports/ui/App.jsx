@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {withTracker} from 'meteor/react-meteor-data';
 
 import TimerInjector from './TimerInjector.jsx';
 import UiTaskList from './TaskList.jsx';
@@ -11,18 +12,19 @@ import {
     Jumbotron,
     Tabs,
     Tab
-    } from 'react-bootstrap';
+} from 'react-bootstrap';
 import SynchronizedTask from '../SynchronizedTask.js';
 import TaskForm from './TaskForm.jsx';
 import Configuration from './Configuration.jsx';
+import {Configuration as ConfigState} from '../api/Configuration';
 
 
-export default class App extends Component {
+class App extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            timerLength: 1000 * 60 * 2,
+            timerLength: this.props.configuration || 25*60*1000,
         };
 
         this.setCurrentTask = this.setCurrentTask.bind(this);
@@ -115,3 +117,9 @@ export default class App extends Component {
         SynchronizedTask.addTask(taskDescription);
     }
 }
+
+export default withTracker(() => {
+    return {
+        configuration: ConfigState.find().fetch()[0],
+    }
+})(App);
