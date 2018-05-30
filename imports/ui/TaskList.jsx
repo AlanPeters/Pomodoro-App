@@ -15,8 +15,10 @@ class UiTaskList extends Component {
     }
 
     render() {
+        const title = this.props.type == 'current' ? "To-Do" : "Finished";
         return (
             <div>
+                <h3 className={'text-center'}>{title}</h3>
                 <SortableList
                     items={this.props.tasks}
                     onSortEnd={this.reorderTasks}
@@ -68,7 +70,7 @@ export default withTracker(({type}) => {
     return {
         tasks: tasks.map((task) => {
             return new SynchronizedTask(task);
-        }
-        )};
+        }),
+    };
 })(UiTaskList);
 

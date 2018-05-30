@@ -43,7 +43,6 @@ class App extends Component {
         }
         return (
             <div className="app">
-                <AccountsUIWrapper />
                 <Grid>
                         <Jumbotron>
                             <h1>Pomodoro Tracker</h1>
@@ -83,8 +82,12 @@ class App extends Component {
                                     </Row>
                                 </Tab>
                                 <Tab eventKey={2} title="Configuration">
-                                    <Configuration time={this.state.timerLength}
-                                    setTime={this.setTimerLength}/>
+                                    <Configuration
+                                        time={this.state.timerLength}
+                                        setTime={this.setTimerLength}/>
+                                </Tab>
+                                <Tab eventKey={3} title="Account">
+                                    <AccountsUIWrapper />
                                 </Tab>
                             </Tabs>
                         </Col>
