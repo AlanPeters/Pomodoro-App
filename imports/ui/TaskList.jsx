@@ -3,6 +3,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Tasks } from '../api/Tasks.js';
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 import {ListGroup} from 'react-bootstrap';
+import { Meteor } from 'meteor/meteor';
 
 
 import Task from './Task.jsx';
@@ -65,7 +66,7 @@ const SortableList = SortableContainer(({items}) => {
 
 export default withTracker(({type}) => {
     const isDone = type !== 'current';
-    const tasks = Tasks.find({isDone:isDone}).fetch().sort((a, b) => a.order-b.order);
+    const tasks = Tasks.find({isDone:isDone, userID:Meteor.userId()}).fetch().sort((a, b) => a.order-b.order);
 
     return {
         tasks: tasks.map((task) => {

@@ -1,4 +1,5 @@
 import { Tasks }  from './api/Tasks.js';
+import { Meteor } from 'meteor/meteor';
 
 
 export default class SynchronizedTask{
@@ -51,7 +52,8 @@ export default class SynchronizedTask{
         Tasks.insert({
             description: description,
             isDone: false,
-            timeSpent: 0
+            timeSpent: 0,
+            userID: Meteor.userId(),
         });
     }
 }
