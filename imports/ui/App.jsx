@@ -26,7 +26,7 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            timerLength: this.props.configuration || 25*60*1000,
+             // timerLength: this.props.configuration.defaultTimerLength || 25*60*1000,
         };
 
         this.setCurrentTask = this.setCurrentTask.bind(this);
@@ -50,7 +50,7 @@ class App extends Component {
                     <Row>
                         <Col lg={12}>
                             <Timer
-                                timerLength={this.state.timerLength}
+                                timerLength={this.getTimerLength()}
                                 finishedHandler={this.completeTask}
                             />
                         </Col>
@@ -83,7 +83,7 @@ class App extends Component {
                                 </Tab>
                                 <Tab eventKey={2} title="Configuration">
                                     <Configuration
-                                        time={this.state.timerLength}
+                                        time={this.getTimerLength()}
                                         setTime={this.setTimerLength}/>
                                 </Tab>
                                 <Tab eventKey={3} title="Account">
@@ -97,6 +97,9 @@ class App extends Component {
         );
     }
 
+    getTimerLength(){
+        return this.props.configuration.defaultTimerLength || 25 * 60 * 1000;
+    }
     setCurrentTask(task){
         this.setState({
             currentTask: task,
@@ -110,6 +113,16 @@ class App extends Component {
     }
 
     setTimerLength(time){
+        if(this.props.configuration._id){
+            ConfigState.update(this.props.configuration._id, {$set:{defaultTimerLength: time}} );
+        }else{
+            ConfigState.insert(
+                {
+                    defaultTimerLength:time,
+                    userId:Meteor.userId()
+                }
+            );
+        }
         this.setState({
             timerLength:time,
         });
@@ -122,10 +135,13 @@ class App extends Component {
     addTask(taskDescription){
         SynchronizedTask.addTask(taskDescription);
     }
+
 }
 
 export default withTracker(() => {
+    const configuration = ConfigState.find({userId:Meteor.userId()}).fetch()[0] || {};
+    console.log(configuration);
     return {
-        configuration: ConfigState.find().fetch()[0],
+        configuration: configuration,
     }
 })(App);
