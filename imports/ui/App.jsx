@@ -45,7 +45,7 @@ class App extends Component {
             <div className="app">
                 <Grid>
                         <Jumbotron>
-                            <h1>Pomodoro Tracker</h1>
+                            <h1 className="text-center">Pomodoro Tracker</h1>
                         </Jumbotron>
                     <Row>
                         <Col lg={12}>
@@ -66,7 +66,7 @@ class App extends Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Col ml={12}>
+                        <Col md={12}>
                             <Tabs defaultActiveKey={1} id="mainTabs">
                                 <Tab eventKey={1} title="Tasks">
                                     <Row>

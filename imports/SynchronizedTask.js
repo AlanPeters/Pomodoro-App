@@ -27,9 +27,13 @@ export default class SynchronizedTask{
         return this.task.timeSpent;
     }
 
+
     addTime(time){
         Tasks.update(this.task._id, {
-            $set: {timeSpent: this.task.timeSpent + time},
+            $set: {
+                timeSpent: this.task.timeSpent + time,
+                pomodorosSpent: (this.task.pomodoroSpent || 0) + 1,
+            },
         });
     }
 

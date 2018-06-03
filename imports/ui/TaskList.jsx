@@ -23,6 +23,7 @@ class UiTaskList extends Component {
                 <SortableList
                     items={this.props.tasks}
                     onSortEnd={this.reorderTasks}
+                    disabled={this.props.isDone}
                 />
             </div>
         );
@@ -52,12 +53,17 @@ const SortableItem = SortableElement(({task}) =>
     <Task task={task} />
 );
 
-const SortableList = SortableContainer(({items}) => {
+const SortableList = SortableContainer(({items, disabled}) => {
     return (
         <ListGroup componentClass="ul">
             {
                 items.map((task, index) => (
-                    <SortableItem key={`item-${index}`} index={index} task={task} />
+                    <SortableItem
+                        key={`item-${index}`}
+                        index={index}
+                        task={task}
+                        disabled={disabled}
+                    />
                 ))
             }
         </ListGroup>
@@ -72,6 +78,7 @@ export default withTracker(({type}) => {
         tasks: tasks.map((task) => {
             return new SynchronizedTask(task);
         }),
+        isDone: isDone,
     };
 })(UiTaskList);
 
