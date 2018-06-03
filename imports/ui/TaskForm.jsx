@@ -1,4 +1,11 @@
-import React, { Component } from 'react'; 
+import React, { Component } from 'react';
+import {
+    Form,
+    FormGroup,
+    ControlLabel,
+    FormControl,
+    Panel
+} from 'react-bootstrap';
 
 export default class TaskForm extends Component {
     constructor(props){
@@ -12,14 +19,21 @@ export default class TaskForm extends Component {
 
     render(){
         return (
-            <form onSubmit={this.handleSubmit}>
-                <input
-                    type='text'
-                    name="name"
-                    value={this.state.name}
-                    onChange={this.handleChange}
-                />
-            </form>
+            <Panel>
+                <Panel.Body>
+                    <Form inline onSubmit={this.handleSubmit}>
+                        <FormGroup>
+                            <ControlLabel>New Task Name</ControlLabel>{' '}
+                            <FormControl
+                                type='text'
+                                name="name"
+                                value={this.state.name}
+                                onChange={this.handleChange}
+                            />
+                        </FormGroup>
+                    </Form>
+                </Panel.Body>
+            </Panel>
         );
     }
 

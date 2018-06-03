@@ -3,6 +3,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Tasks } from '../api/Tasks.js';
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 import {ListGroup} from 'react-bootstrap';
+import { Meteor } from 'meteor/meteor';
 
 
 import Task from './Task.jsx';
@@ -15,11 +16,14 @@ class UiTaskList extends Component {
     }
 
     render() {
+        const title = this.props.type == 'current' ? "To-Do" : "Finished";
         return (
             <div>
+                <h3 className={'text-center'}>{title}</h3>
                 <SortableList
                     items={this.props.tasks}
                     onSortEnd={this.reorderTasks}
+                    disabled={this.props.isDone}
                 />
             </div>
         );
@@ -49,12 +53,17 @@ const SortableItem = SortableElement(({task}) =>
     <Task task={task} />
 );
 
-const SortableList = SortableContainer(({items}) => {
+const SortableList = SortableContainer(({items, disabled}) => {
     return (
         <ListGroup componentClass="ul">
             {
                 items.map((task, index) => (
-                    <SortableItem key={`item-${index}`} index={index} task={task} />
+                    <SortableItem
+                        key={`item-${index}`}
+                        index={index}
+                        task={task}
+                        disabled={disabled}
+                    />
                 ))
             }
         </ListGroup>
@@ -63,12 +72,13 @@ const SortableList = SortableContainer(({items}) => {
 
 export default withTracker(({type}) => {
     const isDone = type !== 'current';
-    const tasks = Tasks.find({isDone:isDone}).fetch().sort((a, b) => a.order-b.order);
+    const tasks = Tasks.find({isDone:isDone, userID:Meteor.userId()}).fetch().sort((a, b) => a.order-b.order);
 
     return {
         tasks: tasks.map((task) => {
             return new SynchronizedTask(task);
-        }
-        )};
+        }),
+        isDone: isDone,
+    };
 })(UiTaskList);
 

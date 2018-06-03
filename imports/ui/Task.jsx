@@ -1,6 +1,13 @@
 import React, {Component} from 'react';
 import Timer from '../Timer.js';
-import {Label, ListGroupItem, Button} from 'react-bootstrap';
+import {
+    Label,
+    ListGroupItem,
+    Button,
+    Grid,
+    Row,
+    Col,
+    } from 'react-bootstrap';
 
 export default class Task extends Component {
     constructor(props) {
@@ -19,45 +26,67 @@ export default class Task extends Component {
         const hours = displayTime.hours.toString() + ":";
         const isFinished = this.props.task.isDone();
         const description = this.props.task.getDescription();
+        const button = <Button onClick={this.finishTask}>Finish</Button>;
+        const time = <h5>Time: <Label>{hours}{minutes}:{seconds}</Label></h5>;
         if (isFinished) {
             return (
                 <FinishedTask
-                    hours={hours}
-                    minutes={minutes}
-                    seconds={seconds}
-                    description={description}/>
+                    time={time}
+                    description={description}
+                />
+
             );
         } else {
             return (
                 <CurrentTask
-                    hours={hours}
-                    minutes={minutes}
-                    seconds={seconds}
+                    time={time}
+                    button={button}
                     description={description}
-                    finishTask={this.finishTask}
                 />
             );
         }
     }
 }
 
-
-
 function FinishedTask(props){
+
     return (
-        <ListGroupItem header={<del><h4>{props.description}</h4></del>} >
-            <Button disabled>Finished</Button>
-            <Label>{props.hours}{props.minutes}:{props.seconds}</Label>
-        </ListGroupItem>
-    );
+        <RenderTask
+            {...props}
+            title={<del>{props.description}</del>}
+        />);
 }
 
 function CurrentTask(props) {
     return (
-        <ListGroupItem header={<h4>{props.description}</h4>} >
-            <Button onClick={props.finishTask}>Finish</Button>
-            <Label>{props.hours}{props.minutes}:{props.seconds}</Label>
-        </ListGroupItem>
+        <RenderTask
+            {...props}
+            title={props.description}
+        />
+
+    );
+}
+
+function RenderTask(props){
+    return (
+        <div className="list-group-item" >
+            <Grid fluid>
+                <Row>
+                    <Col md={9} sm={4} xs={8} className="text-left">
+                        <h4>{props.title}</h4>
+                    </Col>
+                    <Col md={3} sm={2} xs={4} className="text-right">
+                        {props.button || ""}
+                    </Col>
+                    <Col md={6} sm={3} xs={6} className="text-left">
+                        {props.time}
+                    </Col>
+                    <Col md={6} sm={3} xs={6} className="text-right">
+                        <h5>Pomodoros:</h5>
+                    </Col>
+                </Row>
+            </Grid>
+        </div>
     );
 }
 
