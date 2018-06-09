@@ -6,7 +6,7 @@ import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 import TimerInjector from './TimerInjector.jsx';
 import UiTaskList from './TaskList.jsx';
 import TimerWithControls from './TimerWithControls.jsx';
-import Timer from '../Timer.js';
+import Timer from '../JSObjects/Timer.js';
 import {
     Grid,
     Row,
@@ -15,7 +15,7 @@ import {
     Tabs,
     Tab
 } from 'react-bootstrap';
-import SynchronizedTask from '../SynchronizedTask.js';
+import SynchronizedTask from '../JSObjects/SynchronizedTask.js';
 import TaskForm from './TaskForm.jsx';
 import Configuration from './Configuration.jsx';
 import {Configuration as ConfigState} from '../api/Configuration';

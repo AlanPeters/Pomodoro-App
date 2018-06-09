@@ -1,5 +1,5 @@
 import Timer from './Timer.js';
-import {Timer as TimerState} from './api/Timer.js';
+import {Timer as TimerState} from '../api/Timer.js';
 import {Meteor} from 'meteor/meteor';
 
 export default class SynchronizedTimer {

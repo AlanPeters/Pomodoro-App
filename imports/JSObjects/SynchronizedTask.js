@@ -1,4 +1,4 @@
-import { Tasks }  from './api/Tasks.js';
+import { Tasks }  from '../api/Tasks.js';
 import { Meteor } from 'meteor/meteor';
 
 

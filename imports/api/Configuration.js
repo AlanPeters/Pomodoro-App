@@ -24,6 +24,36 @@ Meteor.methods({
         );
     },
 
+    'configuration.updateShortBreakDuration'(lengthMs) {
+        check(lengthMs, Number);
+        if (!this.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
 
+        Configuration.upsert(
+            {owner: this.userId},
+            {
+                $set: {
+                    shortBreakDuration: lengthMs,
+                }
+            });
+    },
+
+    'configuration.setCurrentAction'(type) {
+        check(type, String);
+
+        if(!this.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+
+        Configuration.upsert(
+            {owner: this.userId},
+            {
+                $set: {
+                    currentAction: type,
+                }
+            }
+        );
+    }
 
 });

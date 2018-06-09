@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import JSTimer from '../SynchronizedTimer.js';
+import JSTimer from '../JSObjects/SynchronizedTimer.js';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Timer as TimerState} from '../api/Timer.js';
-import {TIMER_STATE} from '../Timer';
+import {TIMER_STATE} from '../JSObjects/Timer';
 // import JSTimer from '../Timer.js';
 
 

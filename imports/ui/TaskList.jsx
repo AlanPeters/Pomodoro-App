@@ -7,7 +7,7 @@ import {Meteor} from 'meteor/meteor';
 
 
 import Task from './Task.jsx';
-import SynchronizedTask from '../SynchronizedTask.js';
+import SynchronizedTask from '../JSObjects/SynchronizedTask.js';
 
 class UiTaskList extends Component {
     constructor(props) {

@@ -1,7 +1,7 @@
 
 import {Meteor} from 'meteor/meteor';
 import {Timer } from './Timer.js';
-import {TIMER_STATE} from "../Timer";
+import {TIMER_STATE} from "../JSObjects/Timer";
 import { assert } from 'chai';
 
 if(Meteor.isServer) {

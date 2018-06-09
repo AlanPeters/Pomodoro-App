@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Timer from '../Timer.js';
+import Timer from '../JSObjects/Timer.js';
 import {
     Label,
     ListGroupItem,
