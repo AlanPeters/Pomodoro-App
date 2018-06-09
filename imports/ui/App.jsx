@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {withTracker} from 'meteor/react-meteor-data';
 
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
@@ -26,7 +26,7 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-             // timerLength: this.props.configuration.defaultTimerLength || 25*60*1000,
+            // timerLength: this.props.configuration.defaultTimerLength || 25*60*1000,
         };
 
         this.setCurrentTask = this.setCurrentTask.bind(this);
@@ -38,15 +38,15 @@ class App extends Component {
     render() {
         const Timer = TimerInjector(TimerWithControls);
         let currentTaskDescription = '';
-        if(this.state.currentTask){
+        if (this.state.currentTask) {
             currentTaskDescription = this.state.currentTask.getDescription();
         }
         return (
             <div className="app">
                 <Grid>
-                        <Jumbotron>
-                            <h1 className="text-center">Pomodoro Tracker</h1>
-                        </Jumbotron>
+                    <Jumbotron>
+                        <h1 className="text-center">Pomodoro Tracker</h1>
+                    </Jumbotron>
                     <Row>
                         <Col lg={12}>
                             <Timer
@@ -62,7 +62,7 @@ class App extends Component {
                     </Row>
                     <Row>
                         <Col md={12}>
-                            <TaskForm addTask={this.addTask} />
+                            <TaskForm addTask={this.addTask}/>
                         </Col>
                     </Row>
                     <Row>
@@ -77,7 +77,7 @@ class App extends Component {
                                             />
                                         </Col>
                                         <Col md={6}>
-                                            <UiTaskList type={'past'} />
+                                            <UiTaskList type={'past'}/>
                                         </Col>
                                     </Row>
                                 </Tab>
@@ -87,7 +87,7 @@ class App extends Component {
                                         setTime={this.setTimerLength}/>
                                 </Tab>
                                 <Tab eventKey={3} title="Account">
-                                    <AccountsUIWrapper />
+                                    <AccountsUIWrapper/>
                                 </Tab>
                             </Tabs>
                         </Col>
@@ -97,50 +97,41 @@ class App extends Component {
         );
     }
 
-    getTimerLength(){
+    getTimerLength() {
         return this.props.configuration.defaultTimerLength || 25 * 60 * 1000;
     }
-    setCurrentTask(task){
+
+    setCurrentTask(task) {
         this.setState({
             currentTask: task,
         });
     }
 
-    completeTask(msTimeElapsed){
-        if(this.state.currentTask){
+    completeTask(msTimeElapsed) {
+        if (this.state.currentTask) {
             this.state.currentTask.addTime(msTimeElapsed);
         }
     }
 
-    setTimerLength(time){
-        if(this.props.configuration._id){
-            ConfigState.update(this.props.configuration._id, {$set:{defaultTimerLength: time}} );
-        }else{
-            ConfigState.insert(
-                {
-                    defaultTimerLength:time,
-                    userId:Meteor.userId()
-                }
-            );
-        }
+    setTimerLength(time) {
+        Meteor.call('configuration.updateDefaultPomodoroLength', time);
         this.setState({
-            timerLength:time,
+            timerLength: time,
         });
     }
 
-    taskListChanegListener(){
-        this.setCurrentTask();
-    }
-
-    addTask(taskDescription){
+    addTask(taskDescription) {
         SynchronizedTask.addTask(taskDescription);
     }
 
 }
 
 export default withTracker(() => {
-    const configuration = ConfigState.find({userId:Meteor.userId()}).fetch()[0] || {};
-    console.log(configuration);
+
+    const configuration = ConfigState.findOne(
+        {owner: Meteor.userId()}
+    ) || {};
+
     return {
         configuration: configuration,
     }
