@@ -57,8 +57,14 @@ export default function (WrappedComponent) {
             }
         };
     return withTracker(() => {
+        const result = TimerState.find().fetch()[0];
+        if(result){
+            result.timerState._id = result._id;
+        }
+        const timerState = result ? result.timerState : undefined;
+
         return {
-            timerState: TimerState.find().fetch()[0],
+            timerState
         };
     })(injectorClass);
 }
