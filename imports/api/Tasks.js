@@ -18,7 +18,7 @@ Meteor.methods({
             description,
             isDone: false,
             timeSpent: 0,
-            pomodoros: [],
+            pomodoros: 0,
             owner: this.userId,
         });
     },
