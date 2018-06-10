@@ -18,8 +18,8 @@ import {
 import SynchronizedTask from '../JSObjects/SynchronizedTask.js';
 import TaskForm from './TaskForm.jsx';
 import Configuration from './Configuration.jsx';
+import ConfigObject from '../JSObjects/Configuration';
 import {Configuration as ConfigState} from '../api/Configuration';
-
 
 class App extends Component {
 
@@ -98,7 +98,7 @@ class App extends Component {
     }
 
     getTimerLength() {
-        return this.props.configuration.defaultTimerLength || 25 * 60 * 1000;
+        return this.props.configuration.getPomodoroDuration();
     }
 
     setCurrentTask(task) {
@@ -111,6 +111,7 @@ class App extends Component {
         if (this.state.currentTask) {
             this.state.currentTask.addTime(msTimeElapsed);
         }
+        this.props.configuration.stepToNextActivity();
     }
 
     setTimerLength(time) {
@@ -128,11 +129,13 @@ class App extends Component {
 
 export default withTracker(() => {
 
-    const configuration = ConfigState.findOne(
+    const configurationState = ConfigState.findOne(
         {owner: Meteor.userId()}
-    ) || {};
+    );
+
+    const configuration = new ConfigObject(configurationState);
 
     return {
-        configuration: configuration,
+        configuration,
     }
 })(App);

@@ -1,3 +1,5 @@
+import {Meteor} from 'meteor/meteor';
+
 export const ACTIVITY_TYPES = {
     POMODORO: 'Pomodoro',
     SHORT_BREAK: 'Short Break',
@@ -6,58 +8,65 @@ export const ACTIVITY_TYPES = {
 
 
 export default class Configuration {
-    constructor() {
-        this.pomodoroLength = 25 * 60 * 1000;
-        this.shortBreakLength = 5 * 60 * 1000;
-        this.longBreakLength = 15 * 60 * 1000;
-        this.longBreakFrequency = 4;
-        this.currentActivity = ACTIVITY_TYPES.POMODORO;
-        this.currentPomodoroCount = 0;
+    constructor(configState) {
+        configState = configState || {};
+        this.pomodoroLength = configState.pomodoroLength || 25 * 60 * 1000;
+        this.shortBreakLength = configState.shortBreakLength || 5 * 60 * 1000;
+        this.longBreakLength = configState.longBreakLength || 15 * 60 * 1000;
+        this.longBreakFrequency = configState.longBreakFrequency || 4;
+        this.currentActivity = configState.currentActivity || ACTIVITY_TYPES.POMODORO;
+        this.currentPomodoroCount = configState.currentPomodoroCount || 0;
     }
 
     setPomodoroDuration(lengthMs) {
-        this.pomodoroLength = lengthMs;
+        Meteor.call('configuration.updatePomodoroDuration', lengthMs);
     }
 
     setShortBreakDuration(lengthMs) {
-        this.shortBreakLength = lengthMs;
+        Meteor.call('configuration.updateShortBreakDuration', lengthMs);
     }
 
     setLongBreakDuration(lengthMs) {
-        this.longBreakLength = lengthMs;
+        Meteor.call('configuration.updateLongBreakDuration', lengthMs);
     }
 
-    setLongBreakFrequency(interval) {
-        this.longBreakFrequency = interval;
+    setLongBreakFrequency(numPomodoros) {
+        Meteor.call('configuration.updateLongBreakFrequency', numPomodoros);
     }
 
     stepToNextActivity() {
+        let newPomodoroCount = this.currentPomodoroCount;
+        let nextActivity;
+
         if (this.currentActivity === ACTIVITY_TYPES.POMODORO) {
-            this.currentPomodoroCount++;
-            this.currentPomodoroCount %= this.longBreakFrequency;
-            if (this.currentPomodoroCount == 0) {
-                this.currentActivity = ACTIVITY_TYPES.LONG_BREAK;
+            newPomodoroCount++;
+            newPomodoroCount %= this.longBreakFrequency;
+            if (newPomodoroCount == 0) {
+                nextActivity = ACTIVITY_TYPES.LONG_BREAK;
             } else {
-                this.currentActivity = ACTIVITY_TYPES.SHORT_BREAK;
+                nextActivity = ACTIVITY_TYPES.SHORT_BREAK;
             }
         } else {
-            this.currentActivity = ACTIVITY_TYPES.POMODORO
+            nextActivity = ACTIVITY_TYPES.POMODORO
         }
+
+        Meteor.call('configuration.setCurrentAction', nextActivity);
+        Meteor.call('configuration.setCurrentPomodoroCount', newPomodoroCount);
     }
 
-    getPomodoroDuration(){
+    getPomodoroDuration() {
         return this.pomodoroLength;
     }
 
-    getShortBreakDuration(){
+    getShortBreakDuration() {
         return this.shortBreakLength;
     }
 
-    getLongBreakDuration(){
+    getLongBreakDuration() {
         return this.longBreakLength;
     }
 
-    getLongBreakFrequency(){
+    getLongBreakFrequency() {
         return this.longBreakFrequency;
     }
 

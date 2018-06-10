@@ -1,12 +1,12 @@
 import {Meteor} from 'meteor/meteor';
 import {Mongo} from 'meteor/mongo';
-import {check} from 'meteor/check';
+import {check, Match} from 'meteor/check';
 
 export const Configuration = new Mongo.Collection('configuration');
 
 Meteor.methods({
 
-    'configuration.updateDefaultPomodoroLength'(lengthMs) {
+    'configuration.updatePomodoroDuration'(lengthMs) {
         //TODO: check for negative values
         check(lengthMs, Number);
 
@@ -18,7 +18,7 @@ Meteor.methods({
             {owner: this.userId},
             {
                 $set: {
-                    defaultTimerLength: lengthMs,
+                    pomodoroLength: lengthMs,
                 }
             }
         );
@@ -34,15 +34,14 @@ Meteor.methods({
             {owner: this.userId},
             {
                 $set: {
-                    shortBreakDuration: lengthMs,
+                    shortBreakLength: lengthMs,
                 }
             });
     },
 
-    'configuration.setCurrentAction'(type) {
-        check(type, String);
-
-        if(!this.userId) {
+    'configuration.updateLongBreakDuration'(lengthMs) {
+        check(lengthMs, Number);
+        if (!this.userId) {
             throw new Meteor.Error('not-authorized');
         }
 
@@ -50,10 +49,59 @@ Meteor.methods({
             {owner: this.userId},
             {
                 $set: {
-                    currentAction: type,
+                    longBreakLength: lengthMs,
                 }
             }
         );
-    }
+    },
+
+    'configuration.updateLongBreakFrequency'(numPomodoros) {
+        check(numPomodoros, Match.Integer);
+        if (!this.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+        Configuration.upsert(
+            {owner: this.userId},
+            {
+                $set: {
+                    longBreakFrequency: numPomodoros,
+                }
+            }
+        );
+    },
+
+    'configuration.setCurrentAction'(activity) {
+        check(activity, String);
+
+        if (!this.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+
+        Configuration.upsert(
+            {owner: this.userId},
+            {
+                $set: {
+                    currentActivity: activity,
+                }
+            }
+        );
+    },
+
+    'configuration.setCurrentPomodoroCount'(count) {
+        check(count, Match.Integer);
+
+        if (!this.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+
+        Configuration.upsert(
+            {owner: this.userId},
+            {
+                $set: {
+                    currentPomodoroCount: count,
+                }
+            }
+        );
+    },
 
 });

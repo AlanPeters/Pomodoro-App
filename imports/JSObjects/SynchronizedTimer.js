@@ -5,7 +5,6 @@ import {Meteor} from 'meteor/meteor';
 export default class SynchronizedTimer {
     constructor(timerState) {
         this.timer = new Timer(timerState);
-        this.timerID = timerState._id;
         this.setTickListener = this.timer.setTickListener.bind(this.timer);
         this.removeTickListener = this.timer.removeTickListener.bind(this.timer);
         this.getHoursMinutesSeconds = this.timer.getHoursMinutesSeconds.bind(this.timer);
