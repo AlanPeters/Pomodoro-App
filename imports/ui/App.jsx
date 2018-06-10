@@ -68,6 +68,7 @@ class App extends Component {
                             <Timer
                                 timerLength={timerLength}
                                 finishedHandler={this.completeTask}
+                                activityType={currentActivity}
                             />
                         </Col>
                     </Row>

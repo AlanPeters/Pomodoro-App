@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {ACTIVITY_TYPES} from "../JSObjects/Configuration";
+import {Button} from "react-bootstrap";
 
 export default class TimerControls extends Component {
     constructor(props) {
@@ -17,14 +19,19 @@ export default class TimerControls extends Component {
     }
 
     render() {
+        const startText = this.props.activityType === ACTIVITY_TYPES.POMODORO ?
+            "Start Pomodoro" : "Start Break";
+        const stopText = this.props.activityType === ACTIVITY_TYPES.POMODORO ?
+            "Finish Pomodoro" : "Finish Break";
+
         const showStop = this.state.running;
-        const startStopText = showStop ? "Finish Pomodoro" : "Start Pomodoro";
+        const startStopText = showStop ? stopText : startText;
 
         return (
             <div>
-                <button name="startStopButton" onClick={this.onStartStop}>
+                <Button name="startStopButton" onClick={this.onStartStop}>
                     {startStopText}
-                </button>
+                </Button>
             </div>
         );
     }
