@@ -1,26 +1,24 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 export default class TimerControls extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
 
-        this.onStartStop = this.onStartStop.bind(this);
-        this.onPause = this.onPause.bind(this);
         this.state = {
             running: this.props.timer.isRunning(),
-        }
+        };
+
+        this.onStartStop = this.onStartStop.bind(this);
     }
 
 
-    componentWillReceiveProps(nextProps){
-        this.setState({ running: nextProps.timer.isRunning()})
+    componentWillReceiveProps(nextProps) {
+        this.setState({running: nextProps.timer.isRunning()})
     }
 
-    render(){
+    render() {
         const showStop = this.state.running;
         const startStopText = showStop ? "Finish Pomodoro" : "Start Pomodoro";
-
-        const pauseText = "Pause";
 
         return (
             <div>
@@ -31,8 +29,8 @@ export default class TimerControls extends Component {
         );
     }
 
-    onStartStop(){
-        if(this.props.timer.isRunning()){
+    onStartStop() {
+        if (this.props.timer.isRunning()) {
             this.props.finishedHandler();
         } else {
             this.props.timer.start();
@@ -42,14 +40,5 @@ export default class TimerControls extends Component {
         });
     }
 
-    onPause(){
-        if(this.props.timer.isRunning()) {
-            this.paused = true;
-            this.props.timer.stop();
-        } else if (this.paused) {
-            this.paused = false;
-            this.props.timer.start();
-        }
-    }
 }
 

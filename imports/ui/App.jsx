@@ -18,7 +18,7 @@ import {
 import SynchronizedTask from '../JSObjects/SynchronizedTask.js';
 import TaskForm from './TaskForm.jsx';
 import Configuration from './Configuration.jsx';
-import ConfigObject from '../JSObjects/Configuration';
+import ConfigObject, { ACTIVITY_TYPES } from '../JSObjects/Configuration';
 import {Configuration as ConfigState} from '../api/Configuration';
 
 class App extends Component {
@@ -41,6 +41,22 @@ class App extends Component {
         if (this.state.currentTask) {
             currentTaskDescription = this.state.currentTask.getDescription();
         }
+
+
+        const currentActivity = this.props.configuration.getCurrentActivity();
+        let activityHeader;
+        let timerLength;
+        if (currentActivity === ACTIVITY_TYPES.POMODORO) {
+            activityHeader = "Current Task: " + currentTaskDescription;
+            timerLength = this.props.configuration.getPomodoroDuration();
+        } else if (currentActivity === ACTIVITY_TYPES.SHORT_BREAK) {
+            activityHeader = "Short Break";
+            timerLength = this.props.configuration.getShortBreakDuration();
+        } else if (currentActivity === ACTIVITY_TYPES.LONG_BREAK){
+            activityHeader = "Long Break";
+            timerLength = this.props.configuration.getLongBreakDuration();
+        }
+
         return (
             <div className="app">
                 <Grid>
@@ -50,14 +66,14 @@ class App extends Component {
                     <Row>
                         <Col lg={12}>
                             <Timer
-                                timerLength={this.getTimerLength()}
+                                timerLength={timerLength}
                                 finishedHandler={this.completeTask}
                             />
                         </Col>
                     </Row>
                     <Row>
                         <Col lg={12}>
-                            <h2 className={'text-center'}>Current Task: {currentTaskDescription}</h2>
+                            <h2 className={'text-center'}>{activityHeader}</h2>
                         </Col>
                     </Row>
                     <Row>
@@ -108,9 +124,11 @@ class App extends Component {
     }
 
     completeTask(msTimeElapsed) {
-        if (this.state.currentTask) {
+        if (this.state.currentTask
+            && this.props.configuration.currentActivity === ACTIVITY_TYPES.POMODORO) {
             this.state.currentTask.addTime(msTimeElapsed);
         }
+
         this.props.configuration.stepToNextActivity();
     }
 

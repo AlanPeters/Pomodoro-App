@@ -70,4 +70,7 @@ export default class Configuration {
         return this.longBreakFrequency;
     }
 
+    getCurrentActivity(){
+        return this.currentActivity;
+    }
 }
