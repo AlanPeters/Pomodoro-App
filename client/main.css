@@ -1,0 +1,22 @@
+@import url("https://fonts.googleapis.com/css?family=Orbitron:700,900");
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300i,700i");
+/* CSS declarations go here */
+.container {
+  max-width: 730px; }
+
+.timer {
+  background-color: #5cb85c; }
+  .timer h1 {
+    font-weight: bolder;
+    display: inline;
+    font-size: 64pt;
+    color: #FFFFFF;
+    margin-bottom: 0px; }
+  .timer .timerDisplay {
+    width: auto;
+    float: left; }
+  .timer .timerControls {
+    width: auto;
+    float: right; }
+
+/*# sourceMappingURL=main.css.map */

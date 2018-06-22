@@ -11,7 +11,7 @@ import {
     Grid,
     Row,
     Col,
-    Jumbotron,
+    PageHeader,
     Tabs,
     Tab
 } from 'react-bootstrap';
@@ -60,9 +60,9 @@ class App extends Component {
         return (
             <div className="app">
                 <Grid>
-                    <Jumbotron>
-                        <h1 className="text-center">Pomodoro Tracker</h1>
-                    </Jumbotron>
+                    <PageHeader>
+                        Pomodoro Tracker
+                    </PageHeader>
                     <Row>
                         <Col lg={12}>
                             <Timer

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Panel} from "react-bootstrap";
+import {Panel, Well} from "react-bootstrap";
 
 import TimerControls from './TimerControls.jsx';
 import Timer from './Timer.jsx';
@@ -19,8 +19,8 @@ export default class TimerWithControls extends Component {
 
     render() {
         return (
-            <Panel>
-                <Panel.Body>
+            <Panel >
+                <Panel.Body className="timer">
                     <Timer
                         timer={this.props.timer}
                     />

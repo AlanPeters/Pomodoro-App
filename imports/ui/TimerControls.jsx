@@ -28,7 +28,7 @@ export default class TimerControls extends Component {
         const startStopText = showStop ? stopText : startText;
 
         return (
-            <div>
+            <div className="timerControls">
                 <Button name="startStopButton" onClick={this.onStartStop}>
                     {startStopText}
                 </Button>
