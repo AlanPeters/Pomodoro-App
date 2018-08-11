@@ -1,6 +1,6 @@
 import Timer from './Timer.js';
 import { assert } from 'chai';
-import { TIMER_STATE} from "./enums/TimerState";
+import { TIMER_STATE} from "../Timer.js";
 import MockDate from 'mockdate';
 import sinon from 'sinon';
 

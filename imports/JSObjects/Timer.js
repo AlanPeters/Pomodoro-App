@@ -1,4 +1,9 @@
-import { TIMER_STATE } from './enums/TimerState.js';
+
+export const TIMER_STATE = {
+    STOPPED: 'Stopped',
+    RUNNING: 'Running',
+    PAUSED: 'Paused',
+};
 
 export default class Timer {
     constructor(timerState){

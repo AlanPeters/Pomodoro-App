@@ -1,10 +1,10 @@
 import Timer from './Timer.js';
-import { Timer as TimerState } from './api/Timer.js';
+import {Timer as TimerState} from '../api/Timer.js';
+import {Meteor} from 'meteor/meteor';
 
 export default class SynchronizedTimer {
-    constructor(timerState){
+    constructor(timerState) {
         this.timer = new Timer(timerState);
-        this.timerID = timerState._id;
         this.setTickListener = this.timer.setTickListener.bind(this.timer);
         this.removeTickListener = this.timer.removeTickListener.bind(this.timer);
         this.getHoursMinutesSeconds = this.timer.getHoursMinutesSeconds.bind(this.timer);
@@ -14,23 +14,19 @@ export default class SynchronizedTimer {
         this.isRunning = this.timer.isRunning.bind(this.timer);
     }
 
-    start(){
+    start() {
         this.timer.start();
-        if(this.timerID) {
-            TimerState.update(this.timerID, this.timer.toJSON());
-        }else{
-            TimerState.insert(this.timer.toJSON());
-        }
+        Meteor.call('timer.insert', this.timer.toJSON());
     }
 
-    stop(){
+    stop() {
         this.timer.stop();
-        TimerState.update(this.timerID, this.timer.toJSON());
+        Meteor.call('timer.insert', this.timer.toJSON());
     }
 
-    finish(){
+    finish() {
         this.timer.stop();
-        TimerState.remove(this.timerID);
+        Meteor.call('timer.remove');
     }
 
 }

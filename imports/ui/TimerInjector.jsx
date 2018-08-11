@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import JSTimer from '../SynchronizedTimer.js';
+import JSTimer from '../JSObjects/SynchronizedTimer.js';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Timer as TimerState} from '../api/Timer.js';
-import {TIMER_STATE} from '../enums/TimerState.js';
+import {TIMER_STATE} from '../JSObjects/Timer';
 // import JSTimer from '../Timer.js';
 
 
@@ -57,8 +57,12 @@ export default function (WrappedComponent) {
             }
         };
     return withTracker(() => {
+        Meteor.subscribe('timer');
+        const result = TimerState.findOne();
+        const timerState = result ? result.timerState : undefined;
+
         return {
-            timerState: TimerState.find().fetch()[0],
+            timerState
         };
     })(injectorClass);
 }

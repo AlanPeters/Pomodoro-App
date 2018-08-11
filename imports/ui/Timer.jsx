@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 
 export default class Timer extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
 
         this.myTick = this.myTick.bind(this);
@@ -12,42 +12,46 @@ export default class Timer extends Component {
         };
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.setupTimer();
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.tearDownTimer();
     }
 
-    componentWillReceiveProps(nextProps){
+    componentWillReceiveProps(nextProps) {
         this.props.timer.removeTickListener();
         nextProps.timer.setTickListener(this.myTick);
-        this.setState({ displayTime: nextProps.timer.getHoursMinutesSeconds(), });
+        this.setState({displayTime: nextProps.timer.getHoursMinutesSeconds(),});
     }
 
-    setupTimer(){
+    setupTimer() {
         this.props.timer.setTickListener(this.myTick);
     }
 
-    tearDownTimer(){
+    tearDownTimer() {
         this.props.timer.removeTickListener();
     }
 
-    myTick(){
+    myTick() {
         const displayTime = this.props.timer.getHoursMinutesSeconds();
         this.setState({
             displayTime: displayTime,
         });
     }
 
-    render(){
+    render() {
         const displayTime = this.state.displayTime;
-        const minutes = displayTime.minutes.toString().padStart(2,"0")
-        const seconds = displayTime.seconds.toString().padStart(2,"0");
-        const hours = displayTime.hours > 0 ? displayTime.hours.toString()+":" : "";
+        const minutes = displayTime.minutes.toString().padStart(2, "0")
+        const seconds = displayTime.seconds.toString().padStart(2, "0");
+        const hours = displayTime.hours > 0 ? displayTime.hours.toString() + ":" : "";
         const symbol = displayTime.isNegative ? '-' : '';
-        return <h2>{symbol}{hours}{minutes}:{seconds}</h2>;
+        return (
+            <div className="timerDisplay">
+                <h1>{symbol}{hours}{minutes}:{seconds}</h1>
+            </div>
+        );
     }
 
 }

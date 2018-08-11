@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import { withTracker } from 'meteor/react-meteor-data';
-import { Tasks } from '../api/Tasks.js';
+import {withTracker} from 'meteor/react-meteor-data';
+import {Tasks} from '../api/Tasks.js';
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 import {ListGroup} from 'react-bootstrap';
-import { Meteor } from 'meteor/meteor';
+import {Meteor} from 'meteor/meteor';
 
 
 import Task from './Task.jsx';
-import SynchronizedTask from '../SynchronizedTask.js';
+import SynchronizedTask from '../JSObjects/SynchronizedTask.js';
 
 class UiTaskList extends Component {
     constructor(props) {
@@ -29,20 +29,21 @@ class UiTaskList extends Component {
         );
     }
 
-    componentDidMount(){
-        if(this.props.tasks[0]) {
+    componentDidMount() {
+        if (this.props.tasks[0]) {
             if (this.props.currentTaskHandler) {
                 this.props.currentTaskHandler(this.props.tasks[0]);
             }
         }
     }
-    componentWillReceiveProps(nextProps){
-        if(nextProps.tasks[0] && nextProps.currentTaskHandler){
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.tasks[0] && nextProps.currentTaskHandler) {
             nextProps.currentTaskHandler(nextProps.tasks[0]);
         }
     }
 
-    reorderTasks({oldIndex, newIndex}){
+    reorderTasks({oldIndex, newIndex}) {
         const newList = arrayMove(this.props.tasks.slice(), oldIndex, newIndex);
         newList.map((task, index) => task.setOrder(index));
     }
@@ -50,7 +51,7 @@ class UiTaskList extends Component {
 }
 
 const SortableItem = SortableElement(({task}) =>
-    <Task task={task} />
+    <Task task={task}/>
 );
 
 const SortableList = SortableContainer(({items, disabled}) => {
@@ -71,8 +72,14 @@ const SortableList = SortableContainer(({items, disabled}) => {
 });
 
 export default withTracker(({type}) => {
+    Meteor.subscribe('tasks');
     const isDone = type !== 'current';
-    const tasks = Tasks.find({isDone:isDone, userID:Meteor.userId()}).fetch().sort((a, b) => a.order-b.order);
+    const tasks = Tasks.find(
+        {
+            isDone: isDone,
+            owner: Meteor.userId()
+        }
+    ).fetch().sort((a, b) => a.order - b.order);
 
     return {
         tasks: tasks.map((task) => {
