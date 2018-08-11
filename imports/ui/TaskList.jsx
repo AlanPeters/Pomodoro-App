@@ -72,6 +72,7 @@ const SortableList = SortableContainer(({items, disabled}) => {
 });
 
 export default withTracker(({type}) => {
+    Meteor.subscribe('tasks');
     const isDone = type !== 'current';
     const tasks = Tasks.find(
         {

@@ -57,6 +57,7 @@ export default function (WrappedComponent) {
             }
         };
     return withTracker(() => {
+        Meteor.subscribe('timer');
         const result = TimerState.findOne();
         const timerState = result ? result.timerState : undefined;
 

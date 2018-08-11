@@ -4,6 +4,12 @@ import {check, Match} from 'meteor/check';
 
 export const Configuration = new Mongo.Collection('configuration');
 
+if(Meteor.isServer){
+    Meteor.publish('configuration', function(){
+        return Configuration.find({owner: this.userId});
+    });
+}
+
 Meteor.methods({
 
     'configuration.updatePomodoroDuration'(lengthMs) {

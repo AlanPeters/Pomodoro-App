@@ -148,6 +148,8 @@ class App extends Component {
 
 export default withTracker(() => {
 
+    Meteor.subscribe('configuration');
+
     const configurationState = ConfigState.findOne(
         {owner: Meteor.userId()}
     );
