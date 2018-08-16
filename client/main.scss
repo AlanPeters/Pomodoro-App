@@ -9,8 +9,6 @@
 }
 
 .timer {
-  background-color:#5cb85c;
-  //display:block;
   h1 {
     //font-family: 'Open Sans', sans-serif;
     //font-family: 'Orbitron', sans-serif;
@@ -28,4 +26,21 @@
     width:auto;
     float:right;
   }
+
+}
+
+.timerWarning {
+  background-color: #ffc107;
+}
+
+.timerGood {
+  background-color: #5cb85c;
+}
+
+.timerOver {
+  background-color: #dc3545;
+}
+
+.break {
+  background-color: #17a2b8;
 }

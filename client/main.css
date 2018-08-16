@@ -4,19 +4,29 @@
 .container {
   max-width: 730px; }
 
-.timer {
+.timer h1 {
+  font-weight: bolder;
+  display: inline;
+  font-size: 64pt;
+  color: #FFFFFF;
+  margin-bottom: 0px; }
+.timer .timerDisplay {
+  width: auto;
+  float: left; }
+.timer .timerControls {
+  width: auto;
+  float: right; }
+
+.timerWarning {
+  background-color: #ffc107; }
+
+.timerGood {
   background-color: #5cb85c; }
-  .timer h1 {
-    font-weight: bolder;
-    display: inline;
-    font-size: 64pt;
-    color: #FFFFFF;
-    margin-bottom: 0px; }
-  .timer .timerDisplay {
-    width: auto;
-    float: left; }
-  .timer .timerControls {
-    width: auto;
-    float: right; }
+
+.timerOver {
+  background-color: #dc3545; }
+
+.break {
+  background-color: #17a2b8; }
 
 /*# sourceMappingURL=main.css.map */

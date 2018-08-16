@@ -88,9 +88,9 @@ class App extends Component {
                   <Row>
                     <Col md={6}>
                       <UiTaskList
-                            type="current"
-                            currentTaskHandler={this.setCurrentTask}
-                          />
+                        type="current"
+                        currentTaskHandler={this.setCurrentTask}
+                      />
                     </Col>
                     <Col md={6}>
                       <UiTaskList type="past" />

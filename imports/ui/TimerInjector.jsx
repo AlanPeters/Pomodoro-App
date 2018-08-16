@@ -55,6 +55,7 @@ export default function (WrappedComponent) {
       );
     }
   };
+
   return withTracker(() => {
     Meteor.subscribe('timer');
     const result = TimerState.findOne();
