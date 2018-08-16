@@ -59,7 +59,7 @@ export default class TimerWithControls extends Component {
     const panelClass = classnames({
       timer: true,
       timerGood: activityType === ACTIVITY_TYPES.POMODORO && minutes > 2,
-      timerWarning: minutes < 2 && !isNegative,
+      timerWarning: minutes <= 2 && !isNegative,
       timerOver: isNegative,
       break: (activityType === ACTIVITY_TYPES.LONG_BREAK
           || activityType === ACTIVITY_TYPES.SHORT_BREAK)
