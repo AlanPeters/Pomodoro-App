@@ -53,8 +53,8 @@ export default class TimerWithControls extends Component {
     this.tearDownTimer();
   }
 
-  getTimerCssClass({ minutes, isnegative }, activity) {
-    if (isnegative) return 'timerOver';
+  getTimerCssClass({ minutes, isNegative }, activity) {
+    if (isNegative) return 'timerOver';
     if (activity === ACTIVITY_TYPES.POMODORO) {
       if (minutes < 2) {
         return 'timerWarning';
