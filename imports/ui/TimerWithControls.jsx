@@ -63,7 +63,7 @@ export default class TimerWithControls extends Component {
       timerOver: isNegative,
       break: (activityType === ACTIVITY_TYPES.LONG_BREAK
           || activityType === ACTIVITY_TYPES.SHORT_BREAK)
-          && minutes > 2,
+          && minutes >= 2,
     });
     return (
       <Panel className={panelClass} >
