@@ -99,8 +99,7 @@ class App extends Component {
                 </Tab>
                 <Tab eventKey={2} title="Configuration">
                   <Configuration
-                    time={this.getTimerLength()}
-                    setTime={this.setTimerLength}
+                    configuration={this.props.configuration}
                   />
                 </Tab>
                 <Tab eventKey={3} title="Account">
@@ -134,7 +133,7 @@ class App extends Component {
   }
 
   setTimerLength(time) {
-    Meteor.call('configuration.updateDefaultPomodoroLength', time);
+    this.props.configuration.setPomodoroDuration(time);
   }
 
   addTask(taskDescription) {
