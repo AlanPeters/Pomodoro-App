@@ -53,20 +53,31 @@ export default class TimerWithControls extends Component {
     this.tearDownTimer();
   }
 
+  getTimerCssClass({ minutes, isnegative }, activity) {
+    if (isnegative) return 'timerOver';
+    if (activity === ACTIVITY_TYPES.POMODORO) {
+      if (minutes < 2) {
+        return 'timerWarning';
+      }
+      return 'timerGood';
+    } if (activity === ACTIVITY_TYPES.SHORT_BREAK || ACTIVITY_TYPES.LONG_BREAK) {
+      if (minutes < 2) {
+        return 'timerWarning';
+      }
+      return 'timerGood';
+    }
+    return 'timerNone';
+  }
+
   render() {
     const { activityType } = this.props;
-    const { minutes, isNegative } = this.state.displayTime;
+    const timerCssClass = this.getTimerCssClass(this.state.displayTime, activityType);
     const panelClass = classnames({
       timer: true,
-      timerGood: activityType === ACTIVITY_TYPES.POMODORO && minutes > 2,
-      timerWarning: minutes < 2 && !isNegative,
-      timerOver: isNegative,
-      break: (activityType === ACTIVITY_TYPES.LONG_BREAK
-          || activityType === ACTIVITY_TYPES.SHORT_BREAK)
-          && minutes > 2,
+      [timerCssClass]: true,
     });
     return (
-      <Panel className={panelClass} >
+      <Panel className={panelClass}>
         <Panel.Body>
           <Timer
             time={this.state.displayTime}
