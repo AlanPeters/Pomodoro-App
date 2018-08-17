@@ -58,7 +58,7 @@ export default class Configuration extends Component {
         <form onSubmit={this.handleSubmit}>
           <FormGroup>
             <ControlLabel>
-              Pomodoro Lenth
+              Pomodoro Length
             </ControlLabel>
             <FormControl
               type="number"
