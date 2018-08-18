@@ -54,7 +54,7 @@ Meteor.methods({
     check(taskId, String);
 
     Tasks.update(taskId, {
-      $set: { isDone: true },
+      $set: { doneTime: Date.now() },
     });
   },
 

@@ -74,7 +74,6 @@ export default withTracker(({ type }) => {
   const tasks = Tasks.find(
     {
       isDone,
-      owner: Meteor.userId(),
     },
   ).fetch().sort((a, b) => a.order - b.order);
 
