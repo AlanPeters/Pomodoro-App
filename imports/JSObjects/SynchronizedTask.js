@@ -15,7 +15,7 @@ export default class SynchronizedTask {
   }
 
   isDone() {
-    return this.task.isDone;
+    return this.task.doneTime !== undefined;
   }
 
   getTimeSpent() {
@@ -40,5 +40,14 @@ export default class SynchronizedTask {
 
   static addTask(description) {
     Meteor.call('tasks.add', description);
+  }
+
+  static getCurrentTasks() {
+    return Tasks.find({ doneTime: null }).fetch().sort((a, b) => a.order - b.order);
+  }
+
+  static getTodaysFinishedTasks() {
+    const today = new Date(new Date().setHours(0,0,0,0));
+    return Tasks.find({ doneTime: { $gt: today } }).fetch().sort((a, b) => a.doneTime - b.doneTime);
   }
 }
