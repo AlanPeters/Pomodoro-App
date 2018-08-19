@@ -6,7 +6,7 @@ export const Tasks = new Mongo.Collection('tasks');
 
 if (Meteor.isServer) {
   Meteor.publish('tasks', function tasksPublication() {
-    return Tasks.find({ owner: this.userId });
+    return Tasks.find({ owner: this.userId  });
   });
 }
 
@@ -21,7 +21,6 @@ Meteor.methods({
 
     Tasks.insert({
       description,
-      isDone: false,
       timeSpent: 0,
       pomodoros: 0,
       owner: this.userId,
@@ -54,7 +53,7 @@ Meteor.methods({
     check(taskId, String);
 
     Tasks.update(taskId, {
-      $set: { isDone: true },
+      $set: { doneTime: new Date() },
     });
   },
 

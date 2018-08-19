@@ -3,8 +3,6 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
 import { ListGroup } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
-import { Tasks } from '../api/Tasks.js';
-
 
 import Task from './Task.jsx';
 import SynchronizedTask from '../JSObjects/SynchronizedTask.js';
@@ -69,15 +67,14 @@ const SortableList = SortableContainer(({ items, disabled }) => (
 ));
 
 export default withTracker(({ type }) => {
-  Meteor.subscribe('tasks');
   const isDone = type !== 'current';
-  const tasks = Tasks.find(
-    {
-      isDone,
-      owner: Meteor.userId(),
-    },
-  ).fetch().sort((a, b) => a.order - b.order);
-
+  Meteor.subscribe('tasks');
+  let tasks;
+  if (!isDone) {
+    tasks = SynchronizedTask.getCurrentTasks();
+  } else {
+    tasks = SynchronizedTask.getTodaysFinishedTasks();
+  }
   return {
     tasks: tasks.map(task => new SynchronizedTask(task)),
     isDone,
