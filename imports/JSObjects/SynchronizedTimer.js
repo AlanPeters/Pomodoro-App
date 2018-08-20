@@ -5,12 +5,12 @@ export default class SynchronizedTimer extends Timer {
 
   start(){
     super.start();
-    Meteor.call('timer.insert', this.timer.toJSON());
+    Meteor.call('timer.insert', this.toJSON());
   }
 
   stop(){
     super.stop();
-    Meteor.call('timer.insert', this.timer.toJSON());
+    Meteor.call('timer.insert', this.toJSON());
   }
 
   finish() {
