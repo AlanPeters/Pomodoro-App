@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
+import 'react-dom';
+import { Meteor } from 'meteor/meteor';
+import PropTypes from 'prop-types';
 
 import {
   Grid,
@@ -10,8 +13,6 @@ import {
   Tab,
 } from 'react-bootstrap';
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
-
-import TimerInjector from './TimerInjector.jsx';
 import UiTaskList from './TaskList.jsx';
 import TimerWithControls from './TimerWithControls.jsx';
 import SynchronizedTask from '../JSObjects/SynchronizedTask.js';
@@ -19,8 +20,18 @@ import TaskForm from './TaskForm.jsx';
 import Configuration from './Configuration.jsx';
 import ConfigObject, { ACTIVITY_TYPES } from '../JSObjects/Configuration';
 import { Configuration as ConfigState } from '../api/Configuration';
+import { Timer as TimerState } from '../api/Timer';
+import Timer from '../JSObjects/SynchronizedTimer';
+import TimerInjector from './TimerInjector';
+import TitleUpdator from './TitleUpdator';
+
+const TitleBar = new TimerInjector(TitleUpdator);
 
 class App extends Component {
+  static addTask(taskDescription) {
+    SynchronizedTask.addTask(taskDescription);
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -28,44 +39,55 @@ class App extends Component {
 
     this.setCurrentTask = this.setCurrentTask.bind(this);
     this.completeTask = this.completeTask.bind(this);
-    this.addTask = this.addTask.bind(this);
-    this.setTimerLength = this.setTimerLength.bind(this);
+  }
+
+  setCurrentTask(task) {
+    this.setState({
+      currentTask: task,
+    });
+  }
+
+  completeTask(msTimeElapsed) {
+    const { currentTask } = this.state;
+    const { configuration } = this.props;
+    if (currentTask
+        && configuration.getCurrentActivity() === ACTIVITY_TYPES.POMODORO) {
+      currentTask.addTime(msTimeElapsed);
+    }
+    configuration.stepToNextActivity();
   }
 
   render() {
-    const Timer = TimerInjector(TimerWithControls);
     let currentTaskDescription = '';
-    if (this.state.currentTask) {
-      currentTaskDescription = this.state.currentTask.getDescription();
+    const { currentTask } = this.state;
+    if (currentTask) {
+      currentTaskDescription = currentTask.getDescription();
     }
 
-
-    const currentActivity = this.props.configuration.getCurrentActivity();
+    const { configuration, timer } = this.props;
+    const currentActivity = configuration.getCurrentActivity();
     let activityHeader;
-    let timerLength;
     if (currentActivity === ACTIVITY_TYPES.POMODORO) {
       activityHeader = `Current Task: ${currentTaskDescription}`;
-      timerLength = this.props.configuration.getPomodoroDuration();
     } else if (currentActivity === ACTIVITY_TYPES.SHORT_BREAK) {
       activityHeader = 'Short Break';
-      timerLength = this.props.configuration.getShortBreakDuration();
     } else if (currentActivity === ACTIVITY_TYPES.LONG_BREAK) {
       activityHeader = 'Long Break';
-      timerLength = this.props.configuration.getLongBreakDuration();
     }
 
     return (
       <div className="app">
+        <TitleBar />
         <Grid>
           <PageHeader>
                         Pomodoro Tracker
           </PageHeader>
           <Row>
             <Col lg={12}>
-              <Timer
-                timerLength={timerLength}
-                finishedHandler={this.completeTask}
+              <TimerWithControls
                 activityType={currentActivity}
+                timer={timer}
+                finishedHandler={this.completeTask}
               />
             </Col>
           </Row>
@@ -78,7 +100,7 @@ class App extends Component {
           </Row>
           <Row>
             <Col md={12}>
-              <TaskForm addTask={this.addTask} />
+              <TaskForm addTask={App.addTask} />
             </Col>
           </Row>
           <Row>
@@ -99,7 +121,7 @@ class App extends Component {
                 </Tab>
                 <Tab eventKey={2} title="Configuration">
                   <Configuration
-                    configuration={this.props.configuration}
+                    configuration={configuration}
                   />
                 </Tab>
                 <Tab eventKey={3} title="Account">
@@ -112,37 +134,11 @@ class App extends Component {
       </div>
     );
   }
-
-  getTimerLength() {
-    return this.props.configuration.getPomodoroDuration();
-  }
-
-  setCurrentTask(task) {
-    this.setState({
-      currentTask: task,
-    });
-  }
-
-  completeTask(msTimeElapsed) {
-    if (this.state.currentTask
-            && this.props.configuration.currentActivity === ACTIVITY_TYPES.POMODORO) {
-      this.state.currentTask.addTime(msTimeElapsed);
-    }
-
-    this.props.configuration.stepToNextActivity();
-  }
-
-  setTimerLength(time) {
-    this.props.configuration.setPomodoroDuration(time);
-  }
-
-  addTask(taskDescription) {
-    SynchronizedTask.addTask(taskDescription);
-  }
 }
 
 export default withTracker(() => {
   Meteor.subscribe('configuration');
+  Meteor.subscribe('timer');
 
   const configurationState = ConfigState.findOne(
     { owner: Meteor.userId() },
@@ -150,7 +146,16 @@ export default withTracker(() => {
 
   const configuration = new ConfigObject(configurationState);
 
+  const { timerState = { length: configuration.getCurrentDuration() } } = TimerState.findOne() || {};
+  const timer = new Timer(timerState);
+
   return {
     configuration,
+    timer,
   };
 })(App);
+
+App.propTypes = {
+  configuration: PropTypes.instanceOf(ConfigObject).isRequired,
+  timer: PropTypes.instanceOf(Timer).isRequired,
+};

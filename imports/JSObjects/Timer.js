@@ -146,4 +146,5 @@ export default class Timer {
   static convertMsToSeconds(timeMs) {
     return Math.floor(timeMs / 1000);
   }
+
 }
