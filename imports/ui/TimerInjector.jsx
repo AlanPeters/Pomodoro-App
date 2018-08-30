@@ -1,59 +1,87 @@
 import React, { Component } from 'react';
+import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
+import PropTypes from 'prop-types';
 import JSTimer from '../JSObjects/SynchronizedTimer.js';
 import { Timer as TimerState } from '../api/Timer.js';
 import { TIMER_STATE } from '../JSObjects/Timer';
-// import JSTimer from '../Timer.js';
-
 
 export default function (WrappedComponent) {
   const injectorClass = class extends Component {
-    constructor(props) {
+    constructor (props) {
       super(props);
+      this.tick = this.tick.bind(this);
+      this.state = {};
     }
 
     componentWillMount() {
       this.setupTimer(this.getTimerState());
     }
 
-    componentWillUnmount() {
-      this.state.timer.destroy();
+    componentWillReceiveProps({ timerState }) {
+      this.setupTimer(timerState || this.getDefaultTimerState());
     }
 
-    componentWillReceiveProps(nextProps) {
-      this.setupTimer(nextProps.timerState || this.getDefaultTimerState());
+    componentWillUnmount() {
+      const { timer } = this.state;
+      timer.destroy();
     }
 
     setupTimer(timerState) {
-      if (this.state && this.state.timer) {
-        this.state.timer.destroy();
+      const { timer: oldTimer } = this.state;
+      if (oldTimer) {
+        oldTimer.destroy();
       }
 
+      const timer = new JSTimer(timerState);
+      timer.setTickListener(this.tick);
+
       this.setState({
-        timer: new JSTimer(timerState),
+        timer,
       });
     }
 
     getTimerState() {
-      return this.props.timerState || this.getDefaultTimerState();
+      const { timerState } = this.props;
+      return timerState || this.getDefaultTimerState();
     }
 
     getDefaultTimerState() {
+      const { timerLength } = this.props;
       return {
         state: TIMER_STATE.STOPPED,
-        length: this.props.timerLength,
+        length: timerLength,
       };
+    }
+
+    tick() {
+      const { timer } = this.state;
+      this.setState({
+        timeMs: timer.getRemainingTimeMs(),
+      });
     }
 
     render() {
       const { timerState, timerLength, ...passThroughProps } = this.props;
+      const { timeMs, timer } = this.state;
       return (
         <WrappedComponent
-          timer={this.state.timer}
+          timeMs={timeMs}
+          startTimer={timer.start}
+          endTimer={timer.stop}
           {...passThroughProps}
         />
       );
     }
+  };
+
+  injectorClass.propTypes = {
+    timerState: PropTypes.object,
+    timerLength: PropTypes.number,
+  };
+
+  injectorClass.defaultProps = {
+    timerLength: 0,
   };
 
   return withTracker(() => {

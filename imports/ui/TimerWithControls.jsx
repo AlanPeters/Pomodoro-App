@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import { ACTIVITY_TYPES } from '../JSObjects/Configuration';
 
 import TimerControls from './TimerControls.jsx';
-import Timer from './Timer.jsx';
+import TimerDisplay from './TimerDisplay.jsx';
+import SynchronizedTimer from '../JSObjects/SynchronizedTimer';
 
 
 export default class TimerWithControls extends Component {
@@ -13,30 +14,11 @@ export default class TimerWithControls extends Component {
     super(props);
 
     this.finishedHandler = this.finishedHandler.bind(this);
-    this.state = { displayTime: this.props.timer.getHoursMinutesSeconds() };
+    this.state = {
+      timeMs: this.props.timer.getRemainingTimeMs(),
+    };
 
     this.myTick = this.myTick.bind(this);
-  }
-
-  finishedHandler() {
-    const timeSpent = this.props.timer.getElapsedTimeMs();
-    this.props.timer.finish();
-    this.props.finishedHandler(timeSpent);
-  }
-
-  myTick() {
-    const displayTime = this.props.timer.getHoursMinutesSeconds();
-    this.setState({
-      displayTime,
-    });
-  }
-
-  setupTimer() {
-    this.props.timer.setTickListener(this.myTick);
-  }
-
-  tearDownTimer() {
-    this.props.timer.removeTickListener();
   }
 
   componentDidMount() {
@@ -46,32 +28,54 @@ export default class TimerWithControls extends Component {
   componentWillReceiveProps(nextProps) {
     this.props.timer.removeTickListener();
     nextProps.timer.setTickListener(this.myTick);
-    this.setState({ displayTime: nextProps.timer.getHoursMinutesSeconds() });
+    this.setState({ timeMs: nextProps.timer.getRemainingTimeMs() });
   }
 
   componentWillUnmount() {
     this.tearDownTimer();
   }
 
-  getTimerCssClass({ minutes, isNegative }, activity) {
-    if (isNegative) return 'timerOver';
+  setupTimer() {
+    this.props.timer.setTickListener(this.myTick);
+  }
+
+  static getTimerCssClass(timeMs, activity) {
+    if (timeMs <= 0) return 'timerOver';
     if (activity === ACTIVITY_TYPES.POMODORO) {
-      if (minutes < 2) {
+      if (timeMs < 2 * 60 * 1000) {
         return 'timerWarning';
       }
       return 'timerGood';
     } if (activity === ACTIVITY_TYPES.SHORT_BREAK || ACTIVITY_TYPES.LONG_BREAK) {
-      if (minutes < 2) {
+      if (timeMs < 2 * 60 * 1000) {
         return 'timerWarning';
       }
-      return 'timerGood';
+      return 'break';
     }
     return 'timerNone';
   }
 
+  tearDownTimer() {
+    this.props.timer.removeTickListener();
+  }
+
+  myTick() {
+    const timeMs = this.props.timer.getRemainingTimeMs();
+    this.setState({
+      timeMs,
+    });
+  }
+
+  finishedHandler() {
+    const timeSpent = this.props.timer.getElapsedTimeMs();
+    this.props.timer.finish();
+    this.props.finishedHandler(timeSpent);
+  }
+
   render() {
     const { activityType } = this.props;
-    const timerCssClass = this.getTimerCssClass(this.state.displayTime, activityType);
+    const { timeMs } = this.state;
+    const timerCssClass = TimerWithControls.getTimerCssClass(timeMs, activityType);
     const panelClass = classnames({
       timer: true,
       [timerCssClass]: true,
@@ -79,8 +83,8 @@ export default class TimerWithControls extends Component {
     return (
       <Panel className={panelClass}>
         <Panel.Body>
-          <Timer
-            time={this.state.displayTime}
+          <TimerDisplay
+            timeMs={timeMs}
           />
           <TimerControls
             timer={this.props.timer}
@@ -95,4 +99,6 @@ export default class TimerWithControls extends Component {
 
 TimerWithControls.propTypes = {
   activityType: PropTypes.string.isRequired,
+  timer: PropTypes.instanceOf(SynchronizedTimer).isRequired,
+  finishedHandler: PropTypes.func.isRequired,
 };

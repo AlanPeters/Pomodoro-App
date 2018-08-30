@@ -73,4 +73,17 @@ export default class Configuration {
   getCurrentActivity() {
     return this.currentActivity;
   }
+
+  getCurrentDuration() {
+    switch (this.getCurrentActivity()) {
+      case ACTIVITY_TYPES.POMODORO:
+        return this.getPomodoroDuration();
+      case ACTIVITY_TYPES.SHORT_BREAK:
+        return this.getShortBreakDuration();
+      case ACTIVITY_TYPES.LONG_BREAK:
+        return this.getLongBreakDuration();
+      default:
+        return undefined;
+    }
+  }
 }

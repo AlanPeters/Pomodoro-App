@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   FormGroup,
   ControlLabel,
@@ -6,21 +7,20 @@ import {
   Button,
 } from 'react-bootstrap';
 
+import ConfigObject from '../JSObjects/Configuration';
+
 export default class Configuration extends Component {
   constructor(props) {
     super(props);
     const {
-      pomodoroLength,
-      shortBreakLength,
-      longBreakLength,
-      longBreakFrequency,
-    } = this.props.configuration;
+      configuration,
+    } = this.props;
 
     this.state = {
-      pomodoroLength: pomodoroLength / (60 * 1000),
-      shortBreakLength: shortBreakLength / (60 * 1000),
-      longBreakLength: longBreakLength / (60 * 1000),
-      longBreakFrequency,
+      pomodoroLength: configuration.getPomodoroDuration() / (60 * 1000),
+      shortBreakLength: configuration.getShortBreakDuration() / (60 * 1000),
+      longBreakLength: configuration.getLongBreakDuration() / (60 * 1000),
+      longBreakFrequency: configuration.getLongBreakFrequency(),
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -28,16 +28,17 @@ export default class Configuration extends Component {
   }
 
   handleSubmit(event) {
+    const { configuration } = this.props;
     const {
-      setPomodoroDuration,
-      setShortBreakDuration,
-      setLongBreakDuration,
-      setLongBreakFrequency,
-    } = this.props.configuration;
-    setPomodoroDuration(this.state.pomodoroLength * 60 * 1000);
-    setShortBreakDuration(this.state.shortBreakLength * 60 * 1000);
-    setLongBreakDuration(this.state.longBreakLength * 60 * 1000);
-    setLongBreakFrequency(parseInt(this.state.longBreakFrequency, 10));
+      pomodoroLength,
+      shortBreakLength,
+      longBreakLength,
+      longBreakFrequency,
+    } = this.state;
+    configuration.setPomodoroDuration(pomodoroLength * 60 * 1000);
+    configuration.setShortBreakDuration(shortBreakLength * 60 * 1000);
+    configuration.setLongBreakDuration(longBreakLength * 60 * 1000);
+    configuration.setLongBreakFrequency(parseInt(longBreakFrequency, 10));
 
     event.preventDefault();
   }
@@ -50,6 +51,12 @@ export default class Configuration extends Component {
   }
 
   render() {
+    const {
+      pomodoroLength,
+      shortBreakLength,
+      longBreakLength,
+      longBreakFrequency,
+    } = this.state;
     return (
       <div>
         <h2>
@@ -63,7 +70,7 @@ export default class Configuration extends Component {
             <FormControl
               type="number"
               name="pomodoroLength"
-              value={this.state.pomodoroLength}
+              value={pomodoroLength}
               onChange={this.handleChange}
             />
           </FormGroup>
@@ -74,7 +81,7 @@ export default class Configuration extends Component {
             <FormControl
               type="number"
               name="shortBreakLength"
-              value={this.state.shortBreakLength}
+              value={shortBreakLength}
               onChange={this.handleChange}
             />
           </FormGroup>
@@ -85,7 +92,7 @@ export default class Configuration extends Component {
             <FormControl
               type="number"
               name="longBreakLength"
-              value={this.state.longBreakLength}
+              value={longBreakLength}
               onChange={this.handleChange}
             />
           </FormGroup>
@@ -96,7 +103,7 @@ export default class Configuration extends Component {
             <FormControl
               type="number"
               name="longBreakFrequency"
-              value={this.state.longBreakFrequency}
+              value={longBreakFrequency}
               onChange={this.handleChange}
             />
           </FormGroup>
@@ -108,3 +115,8 @@ export default class Configuration extends Component {
     );
   }
 }
+
+
+Configuration.propTypes = {
+  configuration: PropTypes.instanceOf(ConfigObject).isRequired,
+};

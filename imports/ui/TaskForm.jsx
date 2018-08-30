@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Form,
   FormGroup,
@@ -24,7 +25,7 @@ export default class TaskForm extends Component {
           <Form inline onSubmit={this.handleSubmit}>
             <FormGroup>
               <ControlLabel>
-New Task Name
+                New Task Name
               </ControlLabel>
               {' '}
               <FormControl
@@ -41,7 +42,8 @@ New Task Name
   }
 
   handleSubmit(event) {
-    this.props.addTask(this.state.name);
+    const { addTask } = this.props;
+    addTask(this.state.name);
     this.setState({ name: '' });
     event.preventDefault();
   }
@@ -55,3 +57,7 @@ New Task Name
     });
   }
 }
+
+TaskForm.propTypes = {
+  addTask: PropTypes.func.isRequired,
+};
