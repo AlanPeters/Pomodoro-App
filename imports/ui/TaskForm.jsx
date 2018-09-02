@@ -48,10 +48,7 @@ export default class TaskForm extends Component {
     event.preventDefault();
   }
 
-  handleChange(event) {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
+  handleChange({ target: { value, name } }) {
     this.setState({
       [name]: value,
     });

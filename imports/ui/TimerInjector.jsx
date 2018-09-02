@@ -2,12 +2,41 @@ import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
-import JSTimer from '../JSObjects/SynchronizedTimer.js';
-import { Timer as TimerState } from '../api/Timer.js';
+import JSTimer from '../JSObjects/SynchronizedTimer';
+import { Timer as TimerState } from '../api/Timer';
+import { Configuration as ConfigState } from '../api/Configuration';
 import { TIMER_STATE } from '../JSObjects/Timer';
+import Configuration, { ACTIVITY_TYPES } from '../JSObjects/Configuration';
+
+export const TIMER_DISPLAY_STATES = {
+  TIMER_GOOD: {
+    NAME: 'Timer Good',
+    CSS_CLASS: 'timerGood',
+    FAVICON: 'timer_good.ico',
+  },
+  TIMER_WARNING: {
+    NAME: 'Timer Warning',
+    CSS_CLASS: 'timerWarning',
+    FAVICON: 'timer_warning.ico',
+  },
+  TIMER_OVER: {
+    NAME: 'Timer Over',
+    CSS_CLASS: 'timerOver',
+    FAVICON: 'timer_over.ico',
+  },
+  BREAK: {
+    NAME: 'Break',
+    CSS_CLASS: 'break',
+    FAVICON: 'timer_break.ico',
+  },
+};
 
 export default function (WrappedComponent) {
   const injectorClass = class extends Component {
+    static tearDownOldTimer(oldTimer) {
+      oldTimer.destroy();
+    }
+
     constructor (props) {
       super(props);
       this.tick = this.tick.bind(this);
@@ -15,60 +44,73 @@ export default function (WrappedComponent) {
     }
 
     componentWillMount() {
-      this.setupTimer(this.getTimerState());
+      const { timer, configuration } = this.props;
+      this.setupNewTimer(timer);
+      this.updateState(timer, configuration);
     }
 
-    componentWillReceiveProps({ timerState }) {
-      this.setupTimer(timerState || this.getDefaultTimerState());
+    componentWillReceiveProps({ timer: newTimer, configuration }) {
+      const { timer: oldTimer } = this.props;
+      injectorClass.tearDownOldTimer(oldTimer);
+      this.setupNewTimer(newTimer);
+      this.updateState(newTimer, configuration);
     }
 
     componentWillUnmount() {
-      const { timer } = this.state;
-      timer.destroy();
+      const { timer: oldTimer } = this.props;
+      injectorClass.tearDownOldTimer(oldTimer);
     }
 
-    setupTimer(timerState) {
-      const { timer: oldTimer } = this.state;
-      if (oldTimer) {
-        oldTimer.destroy();
+    setupNewTimer(newTimer) {
+      newTimer.setTickListener(this.tick);
+    }
+
+    static getTimerCssClass(timeMs, activity) {
+      if (timeMs <= 0) return TIMER_DISPLAY_STATES.TIMER_OVER;
+      if (activity === ACTIVITY_TYPES.POMODORO) {
+        if (timeMs < 2 * 60 * 1000) {
+          return TIMER_DISPLAY_STATES.TIMER_WARNING;
+        }
+        return TIMER_DISPLAY_STATES.TIMER_GOOD;
+      } if (activity === ACTIVITY_TYPES.SHORT_BREAK || ACTIVITY_TYPES.LONG_BREAK) {
+        if (timeMs < 2 * 60 * 1000) {
+          return TIMER_DISPLAY_STATES.TIMER_WARNING;
+        }
+        return TIMER_DISPLAY_STATES.BREAK;
       }
-
-      const timer = new JSTimer(timerState);
-      timer.setTickListener(this.tick);
-
-      this.setState({
-        timer,
-      });
-    }
-
-    getTimerState() {
-      const { timerState } = this.props;
-      return timerState || this.getDefaultTimerState();
-    }
-
-    getDefaultTimerState() {
-      const { timerLength } = this.props;
-      return {
-        state: TIMER_STATE.STOPPED,
-        length: timerLength,
-      };
+      return null;
     }
 
     tick() {
-      const { timer } = this.state;
+      const { timer, configuration } = this.props;
+      this.updateState(timer, configuration);
+    }
+
+    updateState(timer, configuration) {
+      const timeMs = timer.getRemainingTimeMs();
+      const currentActivity = configuration.getCurrentActivity();
+      const timerDisplayState = injectorClass.getTimerCssClass(timeMs, currentActivity);
       this.setState({
-        timeMs: timer.getRemainingTimeMs(),
+        timeMs,
+        timerDisplayState,
       });
     }
 
     render() {
-      const { timerState, timerLength, ...passThroughProps } = this.props;
-      const { timeMs, timer } = this.state;
+      const {
+        timer,
+        configuration: unusedConfiguration,
+        ...passThroughProps
+      } = this.props;
+
+      const { timeMs, timerDisplayState } = this.state;
+
       return (
         <WrappedComponent
           timeMs={timeMs}
           startTimer={timer.start}
           endTimer={timer.stop}
+          timerDisplayState={timerDisplayState}
           {...passThroughProps}
         />
       );
@@ -76,21 +118,22 @@ export default function (WrappedComponent) {
   };
 
   injectorClass.propTypes = {
-    timerState: PropTypes.object,
-    timerLength: PropTypes.number,
-  };
-
-  injectorClass.defaultProps = {
-    timerLength: 0,
+    timer: PropTypes.instanceOf(JSTimer).isRequired,
+    configuration: PropTypes.instanceOf(Configuration).isRequired,
   };
 
   return withTracker(() => {
     Meteor.subscribe('timer');
-    const result = TimerState.findOne();
-    const timerState = result ? result.timerState : undefined;
-
+    Meteor.subscribe('configuration');
+    const configState = ConfigState.findOne();
+    const configuration = new Configuration(configState);
+    const timerResult = TimerState.findOne();
+    const timerState = timerResult ? timerResult.timerState
+      : { length: configuration.getCurrentDuration(), state: TIMER_STATE.STOPPED };
+    const timer = new JSTimer(timerState);
     return {
-      timerState,
+      timer,
+      configuration,
     };
   })(injectorClass);
 }

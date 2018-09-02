@@ -27,6 +27,15 @@ export default class Configuration extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  componentWillReceiveProps({ configuration }) {
+    this.setState({
+      pomodoroLength: configuration.getPomodoroDuration() / (60 * 1000),
+      shortBreakLength: configuration.getShortBreakDuration() / (60 * 1000),
+      longBreakLength: configuration.getLongBreakDuration() / (60 * 1000),
+      longBreakFrequency: configuration.getLongBreakFrequency(),
+    });
+  }
+
   handleSubmit(event) {
     const { configuration } = this.props;
     const {
