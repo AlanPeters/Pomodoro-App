@@ -22,10 +22,10 @@ import ConfigObject, { ACTIVITY_TYPES } from '../JSObjects/Configuration';
 import { Configuration as ConfigState } from '../api/Configuration';
 import { Timer as TimerState } from '../api/Timer';
 import Timer from '../JSObjects/SynchronizedTimer';
-import TimerInjector from './TimerInjector';
+import TimerInjector from './TimerInjector.jsx';
 import TitleUpdator from './TitleUpdator';
 
-const TitleBar = new TimerInjector(TitleUpdator);
+const TitleBarUpdator = new TimerInjector(TitleUpdator);
 
 class App extends Component {
   static addTask(taskDescription) {
@@ -77,7 +77,7 @@ class App extends Component {
 
     return (
       <div className="app">
-        <TitleBar />
+        <TitleBarUpdator />
         <Grid>
           <PageHeader>
                         Pomodoro Tracker
@@ -140,13 +140,12 @@ export default withTracker(() => {
   Meteor.subscribe('configuration');
   Meteor.subscribe('timer');
 
-  const configurationState = ConfigState.findOne(
-    { owner: Meteor.userId() },
-  );
+  const configurationState = ConfigState.findOne();
 
   const configuration = new ConfigObject(configurationState);
 
-  const { timerState = { length: configuration.getCurrentDuration() } } = TimerState.findOne() || {};
+  const { timerState = { length: configuration.getCurrentDuration() } } = TimerState.findOne()
+    || {};
   const timer = new Timer(timerState);
 
   return {
