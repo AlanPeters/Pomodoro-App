@@ -40,6 +40,8 @@ export default function (WrappedComponent) {
     constructor (props) {
       super(props);
       this.tick = this.tick.bind(this);
+      this.startTimer = this.startTimer.bind(this);
+      this.stopTimer = this.stopTimer.bind(this);
       this.state = {};
     }
 
@@ -88,29 +90,52 @@ export default function (WrappedComponent) {
 
     updateState(timer, configuration) {
       const timeMs = timer.getRemainingTimeMs();
+      const timeElapsed = timer.getElapsedTimeMs();
       const currentActivity = configuration.getCurrentActivity();
       const timerDisplayState = injectorClass.getTimerCssClass(timeMs, currentActivity);
       this.setState({
         timeMs,
+        timeElapsed,
         timerDisplayState,
+        currentActivity,
+        isRunning: timer.isRunning(),
       });
+    }
+
+    startTimer() {
+      const { timer } = this.props;
+      timer.start();
+    }
+
+    stopTimer() {
+      const { timer } = this.props;
+      timer.finish();
     }
 
     render() {
       const {
         timer,
-        configuration: unusedConfiguration,
+        configuration,
         ...passThroughProps
       } = this.props;
 
-      const { timeMs, timerDisplayState } = this.state;
+      const {
+        timeMs,
+        timerDisplayState,
+        timeElapsed,
+        currentActivity,
+        isRunning,
+      } = this.state;
 
       return (
         <WrappedComponent
           timeMs={timeMs}
-          startTimer={timer.start}
-          endTimer={timer.stop}
+          timeElapsed={timeElapsed}
+          startTimer={this.startTimer}
+          endTimer={this.stopTimer}
+          isRunning={isRunning}
           timerDisplayState={timerDisplayState}
+          currentActivity={currentActivity}
           {...passThroughProps}
         />
       );

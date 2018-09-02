@@ -26,6 +26,7 @@ import TimerInjector from './TimerInjector.jsx';
 import TitleUpdator from './TitleUpdator';
 
 const TitleBarUpdator = new TimerInjector(TitleUpdator);
+const InjectedTimerWithControls = new TimerInjector(TimerWithControls);
 
 class App extends Component {
   static addTask(taskDescription) {
@@ -84,9 +85,7 @@ class App extends Component {
           </PageHeader>
           <Row>
             <Col lg={12}>
-              <TimerWithControls
-                activityType={currentActivity}
-                timer={timer}
+              <InjectedTimerWithControls
                 finishedHandler={this.completeTask}
               />
             </Col>

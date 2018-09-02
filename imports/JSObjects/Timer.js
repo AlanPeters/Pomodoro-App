@@ -6,8 +6,7 @@ export const TIMER_STATE = {
 };
 
 export default class Timer {
-  constructor(timerState) {
-    timerState = timerState || {};
+  constructor(timerState = {}) {
     this.length = timerState.length || 0;
     this.state = timerState.state || TIMER_STATE.STOPPED;
     this.startTime = timerState.startTime;
@@ -78,20 +77,6 @@ export default class Timer {
     this.lastSeconds = curSeconds;
   }
 
-  getHoursMinutesSeconds() {
-    const seconds = this.getRemainingTimeSeconds();
-    const isNegative = seconds <= 0;
-    const hours = Math.floor(Math.abs(seconds) / (60 * 60));
-    const mins = Math.floor(Math.abs(seconds) / 60) % 60;
-    const secs = Math.abs(seconds) % 60;
-    return {
-      isNegative,
-      hours,
-      minutes: mins,
-      seconds: secs,
-    };
-  }
-
   getRemainingTimeSeconds() {
     return Timer.convertMsToSeconds(this.getRemainingTimeMs());
   }
@@ -102,7 +87,9 @@ export default class Timer {
   }
 
   getElapsedTimeMs() {
-    return new Date().getTime() - this.getStartTime().getTime();
+    const startTime = this.getStartTime();
+    if (!startTime) return 0;
+    return new Date().getTime() - startTime.getTime();
   }
 
   toJSON() {
@@ -146,5 +133,4 @@ export default class Timer {
   static convertMsToSeconds(timeMs) {
     return Math.floor(timeMs / 1000);
   }
-
 }

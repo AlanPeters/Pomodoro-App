@@ -2,13 +2,12 @@ import { Meteor } from 'meteor/meteor';
 import Timer from './Timer.js';
 
 export default class SynchronizedTimer extends Timer {
-
-  start(){
+  start() {
     super.start();
     Meteor.call('timer.insert', this.toJSON());
   }
 
-  stop(){
+  stop() {
     super.stop();
     Meteor.call('timer.insert', this.toJSON());
   }

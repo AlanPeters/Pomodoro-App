@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import { ACTIVITY_TYPES } from '../JSObjects/Configuration';
 
@@ -6,25 +7,30 @@ export default class TimerControls extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      running: this.props.timer.isRunning(),
-    };
-
     this.onStartStop = this.onStartStop.bind(this);
   }
 
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({ running: nextProps.timer.isRunning() });
+  onStartStop() {
+    const {
+      isRunning,
+      finishedHandler,
+      startTimer,
+    } = this.props;
+    if (isRunning) {
+      finishedHandler();
+    } else {
+      startTimer();
+    }
   }
 
   render() {
-    const startText = this.props.activityType === ACTIVITY_TYPES.POMODORO
+    const { activityType } = this.props;
+    const startText = activityType === ACTIVITY_TYPES.POMODORO
       ? 'Start Pomodoro' : 'Start Break';
-    const stopText = this.props.activityType === ACTIVITY_TYPES.POMODORO
+    const stopText = activityType === ACTIVITY_TYPES.POMODORO
       ? 'Finish Pomodoro' : 'Finish Break';
 
-    const showStop = this.state.running;
+    const { isRunning: showStop } = this.props;
     const startStopText = showStop ? stopText : startText;
 
     return (
@@ -35,15 +41,11 @@ export default class TimerControls extends Component {
       </div>
     );
   }
-
-  onStartStop() {
-    if (this.props.timer.isRunning()) {
-      this.props.finishedHandler();
-    } else {
-      this.props.timer.start();
-    }
-    this.setState({
-      running: this.props.timer.isRunning(),
-    });
-  }
 }
+
+TimerControls.propTypes = {
+  isRunning: PropTypes.bool.isRequired,
+  activityType: PropTypes.string.isRequired,
+  finishedHandler: PropTypes.func.isRequired,
+  startTimer: PropTypes.func.isRequired,
+};
